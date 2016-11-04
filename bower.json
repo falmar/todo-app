@@ -1,0 +1,23 @@
+{
+  "name": "react app",
+  "version": "1.0.0",
+  "authors": [
+    "David Lavieri <daviddlavier@gmail.com>"
+  ],
+  "description": "Basic project learning react.",
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "dlavieri.com",
+  "dependencies": {
+    "foundation-sites": "~6.2.0",
+    "motion-ui": "^1.2.2"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "private": true
+}
