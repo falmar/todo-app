@@ -21,7 +21,7 @@ const Topbar = ({menu, access}) => {
                         </ul>
                     </div>
                     <div className='shrink column'>
-                        {access}                        
+                        {access}
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@ class TopbarContainer extends Component {
             }, {
                 to: '/todos',
                 regex: /^\/todos/,
-                text: 'Manage TODOs'
+                text: 'TODOs'
             }
         ]
     }
