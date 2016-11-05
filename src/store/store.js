@@ -8,11 +8,12 @@ import logger from 'redux-logger';
 
 // reducers
 import auth from './reducers/auth';
+import messages from './reducers/sys_message';
 
 // middleware
 const middleware = applyMiddleware(thunk, logger());
 
-const store = createStore(combineReducers({auth}), middleware);
+const store = createStore(combineReducers({auth, messages}), middleware);
 
 export default store;
 

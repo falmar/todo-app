@@ -20,6 +20,10 @@ body {
 }
 
 .callout {
+  p {
+    margin-bottom: 0;
+  }
+  
   &.sys-message {
     transition: opacity 400ms;
 

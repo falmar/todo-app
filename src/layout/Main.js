@@ -5,12 +5,14 @@
 import React, {PropTypes} from 'react';
 
 import TopbarContainer from './../components/Topbar';
+import SysMessages from './../components/SysMessages';
 
 const Main = (props) => {
     // console.log(props)
     return (
         <div>
             <TopbarContainer {...props} />
+            <SysMessages />
             {props.children}
         </div>
     )

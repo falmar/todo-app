@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT License
 // License that can be found in the LICENSE file.
 
+import axios from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
@@ -18,6 +19,11 @@ import SignUp from './pages/SignUp';
 
 // Container
 import requireAuth from './containers/Auth';
+
+// misc
+import {setAxiosInterceptors} from './utility/api';
+
+setAxiosInterceptors(store.dispatch, axios);
 
 const render = () => {
   ReactDOM.render(
