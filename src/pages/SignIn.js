@@ -9,7 +9,7 @@ import {browserHistory} from 'react-router';
 import * as authActions from './../store/actions/auth';
 import {setAuthHeader} from './../utility/auth';
 
-const Login = ({disabled, submit, change, email, password}) => {
+const SignIn = ({disabled, submit, change, email, password}) => {
     const cn = `button ${disabled}`;
 
     return (
@@ -31,10 +31,7 @@ const Login = ({disabled, submit, change, email, password}) => {
 
                         <div className='row text-center'>
                             <div className='column'>
-                                <button type='submit' className={cn}>Submit</button>
-                            </div>
-                            <div className='column'>
-                                <button type='button' className='button secondary'>Cancel</button>
+                                <button type='submit' className={cn}>Sign In!</button>
                             </div>
                         </div>
                     </form>
@@ -44,7 +41,7 @@ const Login = ({disabled, submit, change, email, password}) => {
     )
 };
 
-Login.propTypes = {
+SignIn.propTypes = {
     disabled: PropTypes.string.isRequired,
     submit: PropTypes.func.isRequired,
     change: PropTypes.func.isRequired,
@@ -52,7 +49,7 @@ Login.propTypes = {
     password: PropTypes.string.isRequired
 }
 
-class LoginContainer extends Component {
+class SignInContainer extends Component {
     constructor(props) {
         super(props)
 
@@ -94,7 +91,7 @@ class LoginContainer extends Component {
 
         const disabled = loading ? 'disabled' : '';
 
-        return <Login
+        return <SignIn
             disabled={disabled}
             submit={this.onSubmit}
             change={this.onChange}
@@ -102,7 +99,7 @@ class LoginContainer extends Component {
     }
 }
 
-LoginContainer.propTypes = {
+SignInContainer.propTypes = {
     loading: PropTypes.bool.isRequired,
     signIn: PropTypes.func.isRequired
 }
@@ -119,4 +116,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(SignInContainer);

@@ -14,7 +14,7 @@ import store from './store/store';
 // Views
 import Main from './layout/Main';
 import Home from './pages/Home';
-import Login from './pages/Login';
+import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 
 // Container
@@ -32,7 +32,7 @@ const render = () => {
                 <Route component={Main}>
                     <Route path='/' component={Home}/>
                     <Route path='/todos' component={requireAuth(Home)}/>
-                    <Route path='/login' component={requireAuth(Login, false)}/>
+                    <Route path='/login' component={requireAuth(SignIn, false)}/>
                     <Route path='/signup' component={requireAuth(SignUp, false)}/>
                 </Route>
             </Router>

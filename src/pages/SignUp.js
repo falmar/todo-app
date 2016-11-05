@@ -35,10 +35,7 @@ const SignUp = ({disabled, change, submit, name, email, password}) => {
 
                         <div className='row text-center'>
                             <div className='column'>
-                                <button type='submit' className={bc}>Sign Up</button>
-                            </div>
-                            <div className='column'>
-                                <button type='button' className='button secondary'>Cancel</button>
+                                <button type='submit' className={bc}>Sign Up!</button>
                             </div>
                         </div>
                     </form>
