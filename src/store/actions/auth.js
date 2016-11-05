@@ -31,29 +31,30 @@ const signInRejected = () => {
 }
 
 const signIn = (email, password) => {
-  return (dispatch, getState) => {
-    return new Promise((resolve, reject) => {
-      const {auth} = getState();
+    return (dispatch, getState) => {
+        return new Promise((resolve, reject) => {
+            const {auth} = getState();
 
-      if(!auth.loading) {
-        dispatch(signInPending);
+            if(!auth.loading) {
+                dispatch(signInPending);
 
-        axios.post(getAPIUrl('/login/'), {
-          email,
-          password
-        }).then(response => {
-          dispatch(signInFulfilled(response.data));
+                axios.post(getAPIUrl('/login/'), {
+                    email,
+                    password
+                }).then(response => {
+                    dispatch(signInFulfilled(response.data));
 
-          return resolve(response);
-        }).catch(err => {
-          dispatch(signInRejected());
+                    return resolve(response);
+                }).catch(err => {
+                    dispatch(signInRejected());
 
-          return reject(err);
+                    return reject(err);
+                });
+            } else {
+                reject(new Error('it is loading'));
+            }
         });
-      }
-
-    })
-  }
+    }
 }
 
 const signOut = () => {
@@ -62,4 +63,49 @@ const signOut = () => {
   }
 }
 
-export {signIn, signOut}
+export {signInFulfilled, signIn, signOut}
+
+const signUpPending = () => {
+    return {
+        type: types.SIGN_UP_PENDING
+    }
+}
+
+const signUpFulfilled = () => {
+    return {
+        type: types.SIGN_UP_FULFILLED
+    }
+}
+
+const signUpRejected = () => {
+    return {
+        type: types.SIGN_UP_REJECTED
+    }
+}
+
+const signUp = (body) => {
+    return (dispatch, getState) => {
+        return new Promise((resolve, reject) => {
+            const {loading} = getState().auth;
+
+            if(!loading) {
+                dispatch(signUpPending());
+
+                axios.post(
+                    getAPIUrl('/user/'),
+                    body
+                ).then((response) => {
+                    dispatch(signUpFulfilled())
+                    resolve(response);
+                }).catch((err) => {
+                    dispatch(signUpRejected())
+                    reject(err);
+                })
+            } else {
+                reject(new Error('it is loading'));
+            }
+        });
+    }
+}
+
+export {signUp}

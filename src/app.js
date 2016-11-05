@@ -14,6 +14,7 @@ import store from './store/store';
 import Main from './layout/Main';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import SignUp from './pages/SignUp';
 
 // Container
 import requireAuth from './containers/Auth';
@@ -26,6 +27,7 @@ const render = () => {
                     <Route path='/' component={Home}/>
                     <Route path='/todos' component={requireAuth(Home)}/>
                     <Route path='/login' component={requireAuth(Login, false)}/>
+                    <Route path='/signup' component={requireAuth(SignUp, false)}/>
                 </Route>
             </Router>
         </Provider>,

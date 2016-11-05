@@ -7,17 +7,21 @@ import {connect} from 'react-redux';
 import {browserHistory} from 'react-router';
 
 import * as authActions from './../store/actions/auth';
-import {setAuthHeader} from './../utility/auth';
 
-const Login = ({disabled, submit, change, email, password}) => {
-    const cn = `button ${disabled}`;
+const SignUp = ({disabled, change, submit, name, email, password}) => {
+    const bc = `button ${disabled}`
 
     return (
         <div className='row align-center'>
             <div className='small-12 medium-8 large-6 column'>
                 <div className='box'>
-                    <form method='POST' onSubmit={submit}>
-                        <h3>Sign In</h3>
+                    <form onSubmit={submit}>
+                        <h3>Sign Up</h3>
+
+                        <label>
+                            Name:
+                            <input type='text' onChange={change('name')} value={name} />
+                        </label>
 
                         <label>
                             Email:
@@ -31,7 +35,7 @@ const Login = ({disabled, submit, change, email, password}) => {
 
                         <div className='row text-center'>
                             <div className='column'>
-                                <button type='submit' className={cn}>Submit</button>
+                                <button type='submit' className={bc}>Sign Up</button>
                             </div>
                             <div className='column'>
                                 <button type='button' className='button secondary'>Cancel</button>
@@ -42,24 +46,26 @@ const Login = ({disabled, submit, change, email, password}) => {
             </div>
         </div>
     )
-};
+}
 
-Login.propTypes = {
-    disabled: PropTypes.string.isRequired,
-    submit: PropTypes.func.isRequired,
+SignUp.propTypes = {
     change: PropTypes.func.isRequired,
+    submit: PropTypes.func.isRequired,
+    disabled: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired
 }
 
-class LoginContainer extends Component {
+class SignUpContainer extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            name: '',
             email: '',
             password: ''
-        };
+        }
 
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -67,56 +73,49 @@ class LoginContainer extends Component {
 
     onChange(key) {
         return event => {
-            this.setState({[key]: event.target.value})
+            this.setState({[key]: event.target.value});
         }
     }
 
     onSubmit(event) {
         event.preventDefault();
 
-        const {email, password} = this.state;
-
-        // execute sign in
-        const prom = this.props.signIn(email, password);
-
-        this.setState({email: '', password: ''});
-
-        prom.then(({data}) => {
-            setAuthHeader(data.token)
-            browserHistory.push('/');
+        // execute sign up
+        this.props.signUp(this.state).then(() => {
+            this.setState({name: '', email: '', password: ''});
+            browserHistory.push('/login')
         }).catch(() => {
             // error ocurred
+            this.setState({password: ''});
         })
     }
 
     render() {
-        const {loading} = this.props;
+        const disabled = this.props.logged ? 'disabled' : '';
 
-        const disabled = loading ? 'disabled' : '';
-
-        return <Login
+        return <SignUp
             disabled={disabled}
-            submit={this.onSubmit}
             change={this.onChange}
+            submit={this.onSubmit}
             {...this.state} />
     }
 }
 
-LoginContainer.propTypes = {
-    loading: PropTypes.bool.isRequired,
-    signIn: PropTypes.func.isRequired
+SignUpContainer.propTypes = {
+    logged: PropTypes.bool.isRequired,
+    signUp: PropTypes.func.isRequired
 }
 
 const mapStateToProps = ({auth}) => {
     return {
-        loading: auth.loading
+        logged: auth.logged
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        signIn: (email, password) => dispatch(authActions.signIn(email, password))
+        signUp: (body) => dispatch(authActions.signUp(body))
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpContainer);

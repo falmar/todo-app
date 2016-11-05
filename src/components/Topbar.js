@@ -19,10 +19,9 @@ const Topbar = ({menu, access}) => {
                         <ul className='menu'>
                             {menu}
                         </ul>
-
                     </div>
                     <div className='shrink column'>
-                        {access}
+                        {access}                        
                     </div>
                 </div>
             </div>

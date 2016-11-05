@@ -10,20 +10,18 @@ import {signOut} from './../store/actions/auth';
 import {isActiveLink} from './../utility/misc';
 import {removeAuthHeader} from './../utility/auth';
 
-const Access = ({welcome, button}) => {
-    const welcomeStyle = {
+const Access = ({welcome, menu}) => {
+    const style = {
         whiteSpace: 'nowrap'
     };
 
     return (
-        <div className='row'>
-          <div className='hide-for-small-only column align-self-middle' style={welcomeStyle}>
-            {welcome}
+        <div className='row' style={style}>
+          <div className='hide-for-small-only column align-self-middle'>
+              {welcome}
           </div>
           <div className='column'>
-            <ul className='menu'>
-              {button}
-            </ul>
+              {menu}
           </div>
         </div>
     )
@@ -31,7 +29,7 @@ const Access = ({welcome, button}) => {
 
 Access.propTypes = {
   welcome: PropTypes.string.isRequired,
-  button: PropTypes.node.isRequired
+  menu: PropTypes.node.isRequired
 }
 
 class AccessContainer extends Component {
@@ -50,17 +48,32 @@ class AccessContainer extends Component {
 
   getMenu () {
       const {isLoggedIn, onLogout, currentPath} = this.props;
-      const text = isLoggedIn ? 'Sign Out' : 'Sign In';
-      const cb =  isLoggedIn ? () => onLogout : () => null;
+
+      // sign in/out
+      const logText = isLoggedIn ? 'Sign Out' : 'Sign In';
+      const logCB =  isLoggedIn ? () => onLogout : () => null;
+      const logTo = isLoggedIn ? '' : '/login';
+
+      // register / settings
+      const regText = isLoggedIn ? 'Settings' : 'Sign Up';
+      const regCB = () => null;
+      const regTo = isLoggedIn ? '/settings' : '/signup';
 
       // menu / sign in / out
-      return  <li className={isActiveLink(currentPath, /^\/login/) ? 'active' : ''}>
-                  <Link onClick={cb()} to='/login'>{text}</Link>
+      return  (
+          <ul className='menu'>
+              <li className={isActiveLink(currentPath, /^\/login/) ? 'active' : ''}>
+                  <Link onClick={logCB()} to={logTo}>{logText}</Link>
               </li>
+              <li className={isActiveLink(currentPath, /^\/signup/) ? 'active' : ''}>
+                  <Link onClick={regCB()} to={regTo}>{regText}</Link>
+              </li>
+          </ul>
+      )
   }
 
   render() {
-    return <Access welcome={this.getWelcome()} button={this.getMenu()} />
+    return <Access welcome={this.getWelcome()} menu={this.getMenu()} />
   }
 }
 
