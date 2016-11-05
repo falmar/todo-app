@@ -63,23 +63,6 @@ class LoginContainer extends Component {
 
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
-        this.checkAuth = this.checkAuth.bind(this);
-    }
-
-    componentWillMount() {
-        this.checkAuth()
-    }
-
-    componentWillUpdate() {
-        this.checkAuth()
-    }
-
-    checkAuth() {
-        const {logged} = this.props;
-
-        if (logged) {
-            browserHistory.replace('/');
-        }
     }
 
     onChange(key) {
@@ -120,14 +103,12 @@ class LoginContainer extends Component {
 }
 
 LoginContainer.propTypes = {
-    logged: PropTypes.bool.isRequired,
     loading: PropTypes.bool.isRequired,
     signIn: PropTypes.func.isRequired
 }
 
 const mapStateToProps = ({auth}) => {
     return {
-        logged: auth.logged,
         loading: auth.loading
     }
 }

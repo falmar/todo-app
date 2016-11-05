@@ -6,7 +6,7 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import {browserHistory} from 'react-router';
 
-export default(Comp) => {
+export default(Comp, hide = true) => {
     class AuthContainer extends Component {
         constructor(props) {
             super(props);
@@ -25,16 +25,18 @@ export default(Comp) => {
         checkAuth() {
             const {isLoggedIn} = this.props;
 
-            if (!isLoggedIn) {
+            if (!isLoggedIn && hide) {
                 browserHistory.push('/login');
+            } else if (isLoggedIn && !hide) {
+                browserHistory.push('/');
             }
         }
 
         render() {
-            const {props} = this;
+            const {isLoggedIn} = this.props;
 
-            if (props.isLoggedIn) {
-                return <Comp {...props}>{this.children}</Comp>;
+            if ((isLoggedIn && hide) || (!isLoggedIn && !hide)) {
+                return <Comp {...this.props}>{this.children}</Comp>;
             }
 
             return <div/>
@@ -42,6 +44,7 @@ export default(Comp) => {
     }
 
     AuthContainer.propTypes = {
+        children: PropTypes.node,
         isLoggedIn: PropTypes.bool.isRequired
     }
 

@@ -25,7 +25,7 @@ const render = () => {
                 <Route component={Main}>
                     <Route path='/' component={Home}/>
                     <Route path='/todos' component={requireAuth(Home)}/>
-                    <Route path='/login' component={Login}/>
+                    <Route path='/login' component={requireAuth(Login, false)}/>
                 </Route>
             </Router>
         </Provider>,
