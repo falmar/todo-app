@@ -6,7 +6,9 @@ import React, {Component, PropTypes} from 'react';
 import {Link, browserHistory} from 'react-router';
 import {connect} from 'react-redux';
 
+import {signOut} from './../store/actions/auth';
 import {isActiveLink} from './../utility/misc';
+import {removeAuthHeader} from './../utility/auth';
 
 const Access = ({welcome, button}) => {
     const welcomeStyle = {
@@ -15,7 +17,7 @@ const Access = ({welcome, button}) => {
 
     return (
         <div className='row'>
-          <div className='column align-self-middle' style={welcomeStyle}>
+          <div className='hide-for-small-only column align-self-middle' style={welcomeStyle}>
             {welcome}
           </div>
           <div className='column'>
@@ -79,7 +81,8 @@ const mapStateToProps = ({auth}) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         onLogout: () => {
-            dispatch({type: 'LOG_OUT'});
+            removeAuthHeader();
+            dispatch(signOut());
             browserHistory.push('/')
         }
     }

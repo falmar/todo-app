@@ -3,8 +3,14 @@
 // License that can be found in the LICENSE file.
 
 import React, {Component, PropTypes} from 'react';
+import {connect} from 'react-redux';
+import {browserHistory} from 'react-router';
 
-const Login = ({submit, change, email, password}) => {
+import * as authActions from './../store/actions/auth';
+import {setAuthHeader} from './../utility/auth';
+
+const Login = ({disabled, submit, change, email, password}) => {
+    const cn = `button ${disabled}`;
 
     return (
         <div className='row align-center'>
@@ -25,7 +31,7 @@ const Login = ({submit, change, email, password}) => {
 
                         <div className='row text-center'>
                             <div className='column'>
-                                <button type='submit' className='button'>Submit</button>
+                                <button type='submit' className={cn}>Submit</button>
                             </div>
                             <div className='column'>
                                 <button type='button' className='button secondary'>Cancel</button>
@@ -39,6 +45,7 @@ const Login = ({submit, change, email, password}) => {
 };
 
 Login.propTypes = {
+    disabled: PropTypes.string.isRequired,
     submit: PropTypes.func.isRequired,
     change: PropTypes.func.isRequired,
     email: PropTypes.string.isRequired,
@@ -56,6 +63,23 @@ class LoginContainer extends Component {
 
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
+        this.checkAuth = this.checkAuth.bind(this);
+    }
+
+    componentWillMount() {
+        this.checkAuth()
+    }
+
+    componentWillUpdate() {
+        this.checkAuth()
+    }
+
+    checkAuth() {
+        const {logged} = this.props;
+
+        if (logged) {
+            browserHistory.replace('/');
+        }
     }
 
     onChange(key) {
@@ -67,12 +91,51 @@ class LoginContainer extends Component {
     onSubmit(event) {
         event.preventDefault();
 
+        const {email, password} = this.state;
+
         // execute sign in
+        const prom = this.props.signIn(email, password);
+
+        this.setState({email: '', password: ''});
+
+        prom.then(({data}) => {
+            setAuthHeader(data.token)
+            browserHistory.push('/');
+        }).catch(() => {
+            // error ocurred
+        })
     }
 
     render() {
-        return <Login submit={this.onSubmit} change={this.onChange} {...this.state} />
+        const {loading} = this.props;
+
+        const disabled = loading ? 'disabled' : '';
+
+        return <Login
+            disabled={disabled}
+            submit={this.onSubmit}
+            change={this.onChange}
+            {...this.state} />
     }
 }
 
-export default LoginContainer;
+LoginContainer.propTypes = {
+    logged: PropTypes.bool.isRequired,
+    loading: PropTypes.bool.isRequired,
+    signIn: PropTypes.func.isRequired
+}
+
+const mapStateToProps = ({auth}) => {
+    return {
+        logged: auth.logged,
+        loading: auth.loading
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        signIn: (email, password) => dispatch(authActions.signIn(email, password))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginContainer);
