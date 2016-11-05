@@ -2,12 +2,22 @@
 // Use of this source code is governed by a MIT License
 // License that can be found in the LICENSE file.
 
-import React from 'react'
+import React, {PropTypes} from 'react';
 
-const Main = ({children}) => <div> {children} </div>
+import TopbarContainer from './../components/Topbar';
 
-export default Main
+const Main = (props) => {
+    // console.log(props)
+    return (
+        <div>
+            <TopbarContainer {...props} />
+            {props.children}
+        </div>
+    )
+}
 
 Main.propTypes = {
-    children: React.PropTypes.node
+    children: PropTypes.node
 }
+
+export default Main

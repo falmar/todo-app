@@ -6,6 +6,12 @@ body {
   background: url('/images/handmadepaper.png') repeat;
 }
 
+.topbar {
+  background-color: $white;
+  border: solid thin map-get($foundation-palette, secondary);
+  border-top: none;
+}
+
 .callout {
   &.sys-message {
     transition: opacity 400ms;

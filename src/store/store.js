@@ -7,12 +7,12 @@ import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 
 // reducers
-import login from './reducers/login';
+import auth from './reducers/auth';
 
 // middleware
 const middleware = applyMiddleware(thunk, logger());
 
-const store = createStore(combineReducers({login}), middleware);
+const store = createStore(combineReducers({auth}), middleware);
 
 export default store;
 
