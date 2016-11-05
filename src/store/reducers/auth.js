@@ -3,7 +3,11 @@
 // License that can be found in the LICENSE file.
 
 const initialState = {
-  logged: false
+  logged: false,
+  user: {
+    name: 'Guest'
+  },
+  scope: []
 }
 
 export default (state = initialState, action) => {
@@ -11,13 +15,11 @@ export default (state = initialState, action) => {
     case 'LOG_IN':
       return {
         ...state,
-        logged: true
-      }
+        logged: true,
+        user: action.payload
+      };
     case 'LOG_OUT':
-      return {
-        ...state,
-        logged: false
-      }
+      return initialState;
     default:
       return state;
   }

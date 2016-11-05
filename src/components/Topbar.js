@@ -82,10 +82,9 @@ class TopbarContainer extends Component {
         });
     }
 
-
     render() {
-      const {pathname} = this.props.location
-      const ac = () => <Access />
+        const {pathname} = this.props.location
+        const ac = () => <Access currentPath={pathname} />
 
         return (
             <Topbar menu={this.getMenu(pathname)} access={ac()}/>

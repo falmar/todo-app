@@ -3,7 +3,10 @@
 // License that can be found in the LICENSE file.
 
 import React, {Component, PropTypes} from 'react';
+import {Link, browserHistory} from 'react-router';
 import {connect} from 'react-redux';
+
+import {isActiveLink} from './../utility/misc';
 
 const Access = ({welcome, button}) => {
     const welcomeStyle = {
@@ -34,35 +37,52 @@ class AccessContainer extends Component {
     super(props);
 
     this.getWelcome = this.getWelcome.bind(this);
-    this.getButton = this.getButton.bind(this);
+    this.getMenu = this.getMenu.bind(this);
   }
 
   getWelcome() {
-    const name = this.props.isLogged ? 'User' : 'Guest';
+    const name = this.props.isLoggedIn ? this.props.name : 'Guest';
 
     return `Welcome, ${name}!`;
   }
 
-  getButton() {
-      const text = this.props.isLogged ? 'Sign out' : 'Sign in';
+  getMenu () {
+      const {isLoggedIn, onLogout, currentPath} = this.props;
+      const text = isLoggedIn ? 'Sign Out' : 'Sign In';
+      const cb =  isLoggedIn ? () => onLogout : () => null;
 
-      return <li><a>{text}</a></li>;
+      // menu / sign in / out
+      return  <li className={isActiveLink(currentPath, /^\/login/) ? 'active' : ''}>
+                  <Link onClick={cb()} to='/login'>{text}</Link>
+              </li>
   }
 
   render() {
-    return <Access welcome={this.getWelcome()} button={this.getButton()} />
+    return <Access welcome={this.getWelcome()} button={this.getMenu()} />
   }
 }
 
 AccessContainer.propTypes = {
-    isLogged: PropTypes.bool.isRequired
+    isLoggedIn: PropTypes.bool.isRequired,
+    currentPath: PropTypes.string.isRequired,
+    onLogout: PropTypes.func.isRequired,
+    name: PropTypes.string.isRequired
 }
 
 const mapStateToProps = ({auth}) => {
   return {
-    isLogged: auth.logged
+    isLoggedIn: auth.logged,
+    name: auth.user.name
   }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogout: () => {
+            dispatch({type: 'LOG_OUT'});
+            browserHistory.push('/')
+        }
+    }
+}
 
-export default connect(mapStateToProps)(AccessContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(AccessContainer);

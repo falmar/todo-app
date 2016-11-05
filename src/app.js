@@ -13,6 +13,7 @@ import store from './store/store';
 // Views
 import Main from './layout/Main';
 import Home from './pages/Home';
+import Login from './pages/Login';
 
 const render = () => {
   ReactDOM.render(
@@ -21,6 +22,7 @@ const render = () => {
                 <Route component={Main}>
                     <Route path='/' component={Home}/>
                     <Route path='/todos' component={Home}/>
+                    <Route path='/login' component={Login}/>
                 </Route>
             </Router>
         </Provider>,

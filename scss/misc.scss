@@ -8,8 +8,15 @@ body {
 
 .topbar {
   background-color: $white;
-  border: solid thin map-get($foundation-palette, secondary);
+  border: solid thin rgba(10,10,10,0.25);
   border-top: none;
+}
+
+.login-box {
+  padding: 20px;
+  margin-top: 25px;
+  background-color: $white;
+  border: solid thin rgba(10,10,10,0.25);
 }
 
 .callout {
