@@ -7,11 +7,15 @@ import * as types from './../constants/todo';
 const initialState = {
     todos: [],
     isFetching: false,
+    isAdding: false,
+    isGetting: false,
+    isUpdated: false,
     fetchedAt: null,
-    pagination: {}
+    pagination: {},
+    current: {}
 }
 
-export default  (state = initialState, action) => {
+const fetchReducer = (state, action) => {
     switch(action.type) {
         case types.TODO_FETCH_PENDING:
             return {
@@ -34,4 +38,91 @@ export default  (state = initialState, action) => {
         default:
             return state;
     }
+}
+
+const getReducer = (state, action) => {
+    switch(action.type) {
+        case types.TODO_GET_PENDING:
+            return {
+                ...state,
+                isGetting: true,
+                current: {}
+            };
+        case types.TODO_GET_FULFILLED:
+            return {
+                ...state,
+                isGetting: false,
+                current: action.payload.todo
+            };
+        case types.TODO_GET_REJECTED:
+            return {
+                ...state,
+                isGetting: false,
+                current: {}
+            };
+        default:
+            return state;
+    }
+}
+
+const addReducer = (state, action) => {
+    switch(action.type) {
+        case types.TODO_ADD_PENDING:
+            return {
+                ...state,
+                isAdding: true
+            };
+        case types.TODO_ADD_FULFILLED:
+            return {
+                ...state,
+                isAdding: false,
+                todos: [
+                    ...state.todos,
+                    action.payload.todo
+                ]
+            };
+        case types.TODO_ADD_REJECTED:
+            return {
+                ...state,
+                isAdding: false
+            };
+        default:
+            return state;
+    }
+}
+
+const updateReducer = (state, action) => {
+    switch(action.type) {
+        case types.TODO_UPDATE_PENDING:
+            return {
+                ...state,
+                isUpdate: true
+            };
+        case types.TODO_UPDATE_FULFILLED:
+            return {
+                ...state,
+                isUpdate: false,
+                todos: state.todos.map(elm => {
+                    return elm.id === action.payload.todo.id ? action.payload.todo : elm
+                }),
+                current: state.current.id === action.payload.todo.id ? action.payload.todo : state.current
+            };
+        case types.TODO_UPDATE_REJECTED:
+            return {
+                ...state,
+                isUpdate: false
+            };
+        default:
+            return state;
+    }
+}
+
+export default  (state = initialState, action) => {
+    let newState = state;
+
+    [fetchReducer, getReducer, addReducer, updateReducer].forEach(reducer => {
+        newState = reducer(newState, action)
+    })
+
+    return newState;
 }

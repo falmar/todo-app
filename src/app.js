@@ -18,9 +18,11 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import TodoList from './pages/TodoList';
 import TodoNew from './pages/TodoNew';
+import TodoEdit from './pages/TodoEdit';
 
 // Container
 import requireAuth from './containers/Auth';
+import withRouter from './containers/WithRouter';
 
 // misc
 import {setAxiosInterceptors} from './utility/api';
@@ -40,6 +42,7 @@ const render = () => {
                     <Route path='todos/'>
                         <IndexRoute component={requireAuth(TodoList)}/>
                         <Route path='new/' component={requireAuth(TodoNew)}/>
+                        <Route path=':id/edit' component={withRouter(requireAuth(TodoEdit))}/>
                     </Route>
                 </Route>
             </Router>

@@ -3,22 +3,23 @@
 // License that can be found in the LICENSE file.
 
 import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
-import {Link} from 'react-router';
-
-import * as todoActions from './../store/actions/todo';
 import moment from 'moment';
+import {connect} from 'react-redux';
+import {Link, browserHistory} from 'react-router';
 
-const Todo = ({data}) => {
+import withLoading from './../containers/WithLoading';
+import * as todoActions from './../store/actions/todo';
+
+const Todo = ({edit, data}) => {
     return (
         <tr>
             <td>{data.id}</td>
             <td>{data.title}</td>
             <td>{data.completed ? 'Yes' : 'No'}</td>
-            <td>{moment(data.created_at).format('YYYY-MM-DD HH:mm:ss')}</td>
-            <td>{moment(data.updated_at).format('YYYY-MM-DD HH:mm:ss')}</td>
+            <td className='show-for-medium'>{moment(data.created_at).format('YYYY-MM-DD HH:mm:ss')}</td>
+            <td className='show-for-medium'>{moment(data.updated_at).format('YYYY-MM-DD HH:mm:ss')}</td>
             <td>
-                <button className='button warning small' type='button'><i className='fa fa-pencil'></i></button>
+                <button onClick={edit} className='button warning small' type='button'><i className='fa fa-pencil'></i></button>
                 &nbsp;
                 <button className='button alert small' type='button'><i className='fa fa-trash'></i></button>
             </td>
@@ -27,7 +28,8 @@ const Todo = ({data}) => {
 }
 
 Todo.propTypes = {
-    data: PropTypes.object.isRequired
+    data: PropTypes.object.isRequired,
+    edit: PropTypes.func.isRequired
 }
 
 const TodoList = ({todos, pagination}) => {
@@ -49,23 +51,21 @@ const TodoList = ({todos, pagination}) => {
                                 </div>
                             </div>
 
-                            <div style={{overflow: 'hidden', overflowX: 'auto'}}>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th  className='text-center'>#</th>
-                                            <th  className='text-center'>Title</th>
-                                            <th  className='text-center'>Completed</th>
-                                            <th  className='text-center show-for-medium'>Created At</th>
-                                            <th  className='text-center show-for-medium'>Updated At</th>
-                                            <th  className='text-center'>Options</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {todos}
-                                    </tbody>
-                                </table>
-                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th  className='text-center'>#</th>
+                                        <th  className='text-center'>Title</th>
+                                        <th  className='text-center'>Completed</th>
+                                        <th  className='text-center show-for-medium'>Created At</th>
+                                        <th  className='text-center show-for-medium'>Updated At</th>
+                                        <th  className='text-center'>Options</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {todos}
+                                </tbody>
+                            </table>
 
                         </div>
                     </div>
@@ -83,37 +83,50 @@ TodoList.propTypes = {
 }
 
 class TodoListContainer extends Component {
+    componentWillMount() {
+        const {fetchedAt} = this.props;
 
-    componentDidMount() {
-        this.props.getTodos().catch(() => {
-            // error ocurred
-        });
+        if (!fetchedAt || !moment().isBefore(moment(fetchedAt).add(5, 'm'))) {
+            this.props.getTodos().catch(() => {
+                // error ocurred
+            });
+        }
+    }
+
+    onEdit(id) {
+        return () => {
+            browserHistory.push(`/todos/${id}/edit`)
+        }
     }
 
     getTodos() {
         return this.props.todos.map(todo => {
-            return <Todo key={todo.id} data={todo} />
+            return <Todo key={todo.id} data={todo} edit={this.onEdit(todo.id)} />
         })
     }
 
     render() {
-        return (
-            <TodoList
-                todos={this.getTodos()}
-                pagination={<div />}
-                />
-        )
+        const elm = () => <TodoList
+        todos={this.getTodos()}
+        pagination={<div />}
+            />
+
+        return withLoading(elm, this.props.loading)
     }
 }
 
 TodoListContainer.propTypes = {
     getTodos: PropTypes.func.isRequired,
     todos: PropTypes.array.isRequired,
-    pagination: PropTypes.object.isRequired
+    pagination: PropTypes.object.isRequired,
+    fetchedAt: PropTypes.object,
+    loading: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = ({todos}) => {
     return {
+        loading: todos.isFetching,
+        fetchedAt: todos.fetchedAt,
         todos: todos.todos,
         pagination: todos.pagination
     }

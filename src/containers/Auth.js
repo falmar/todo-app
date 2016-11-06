@@ -26,7 +26,7 @@ export default(Comp, hide = true) => {
             const {isLoggedIn} = this.props;
 
             if (!isLoggedIn && hide) {
-                browserHistory.push('/login');
+                browserHistory.push('/login/');
             } else if (isLoggedIn && !hide) {
                 browserHistory.push('/');
             }

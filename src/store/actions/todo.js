@@ -72,9 +72,9 @@ const addTodoRejected = () => {
 
 export const addTodo = title => {
     return (dispatch, getState) => new Promise((resolve, reject) => {
-            const {isFetching} = getState().todos;
+            const {isAddding} = getState().todos;
 
-            if(!isFetching) {
+            if(!isAddding) {
                 dispatch(addTodoPending());
 
                 axios.post(
@@ -88,6 +88,88 @@ export const addTodo = title => {
                     dispatch(addTodoRejected())
                     reject(err)
                 })
+            }
+    })
+}
+
+const getTodoPending = () => {
+    return {
+        type: types.TODO_GET_PENDING
+    }
+}
+
+const getTodoFulfilled = (payload) => {
+    return {
+        type: types.TODO_GET_FULFILLED,
+        payload
+    }
+}
+
+const getTodoRejected = () => {
+    return {
+        type: types.TODO_GET_REJECTED
+    }
+}
+
+export const getTodo = id => {
+    return (dispatch, getState) => new Promise((resolve, reject) => {
+            const {isGetting} = getState().todos;
+
+            if(!isGetting) {
+                dispatch(getTodoPending());
+
+                axios.get(
+                    getAPIUrl(`/todo/${id}/`)).then(response => {
+                    dispatch(getTodoFulfilled(response.data))
+                    resolve(response)
+                }).catch(err => {
+                    dispatch(getTodoRejected())
+                    reject(err)
+                })
+            } else {
+                reject(new Error('is getting'))
+            }
+    })
+}
+
+const updateTodoPending = () => {
+    return {
+        type: types.TODO_UPDATE_PENDING
+    }
+}
+
+const updateTodoFulfilled = (payload) => {
+    return {
+        type: types.TODO_UPDATE_FULFILLED,
+        payload
+    }
+}
+
+const updateTodoRejected = () => {
+    return {
+        type: types.TODO_UPDATE_REJECTED
+    }
+}
+
+export const updateTodo = (id, todo) => {
+    return (dispatch, getState) => new Promise((resolve, reject) => {
+            const {isGetting} = getState().todos;
+
+            if(!isGetting) {
+                dispatch(updateTodoPending());
+
+                axios.put(
+                    getAPIUrl(`/todo/${id}/`),
+                    todo
+                ).then(response => {
+                    dispatch(updateTodoFulfilled(response.data))
+                    resolve(response)
+                }).catch(err => {
+                    dispatch(updateTodoRejected())
+                    reject(err)
+                })
+            } else {
+                reject(new Error('is updating'))
             }
     })
 }

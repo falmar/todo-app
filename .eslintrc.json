@@ -102,7 +102,7 @@
         "no-extra-parens": [
           "error",
           "all", {
-            "nestedBinaryExpressions": false 
+            "nestedBinaryExpressions": false
           }
         ],
         "no-floating-decimal": "error",
