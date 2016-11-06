@@ -11,7 +11,7 @@ export default (state = initialState, action) => {
         case types.ADD_MESSAGE:
             return [
                 action.payload,
-                ...state
+                ...state.filter(elm => elm.title !== action.payload.title)
             ];
         case types.REMOVE_MESSAGE:
             return state.filter(msg => msg.title !== action.payload);

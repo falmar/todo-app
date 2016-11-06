@@ -98,7 +98,7 @@ const getTodoPending = () => {
     }
 }
 
-const getTodoFulfilled = (payload) => {
+const getTodoFulfilled = payload => {
     return {
         type: types.TODO_GET_FULFILLED,
         payload
@@ -138,7 +138,7 @@ const updateTodoPending = () => {
     }
 }
 
-const updateTodoFulfilled = (payload) => {
+const updateTodoFulfilled = payload => {
     return {
         type: types.TODO_UPDATE_FULFILLED,
         payload
@@ -166,6 +166,47 @@ export const updateTodo = (id, todo) => {
                     resolve(response)
                 }).catch(err => {
                     dispatch(updateTodoRejected())
+                    reject(err)
+                })
+            } else {
+                reject(new Error('is updating'))
+            }
+    })
+}
+
+const deleteTodoPending = () => {
+    return {
+        type: types.TODO_DELETE_PENDING
+    }
+}
+
+const deleteTodoFulfilled = payload => {
+    return {
+        type: types.TODO_DELETE_FULFILLED,
+        payload
+    }
+}
+
+const deleteTodoRejected = () => {
+    return {
+        type: types.TODO_DELETE_REJECTED
+    }
+}
+
+export const deleteTodo = id => {
+    return (dispatch, getState) => new Promise((resolve, reject) => {
+            const {isDeleting} = getState().todos;
+
+            if(!isDeleting) {
+                dispatch(deleteTodoPending());
+
+                axios.delete(
+                    getAPIUrl(`/todo/${id}/`)
+                ).then(response => {
+                    dispatch(deleteTodoFulfilled(id))
+                    resolve(response)
+                }).catch(err => {
+                    dispatch(deleteTodoRejected())
                     reject(err)
                 })
             } else {

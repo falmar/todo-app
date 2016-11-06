@@ -117,10 +117,34 @@ const updateReducer = (state, action) => {
     }
 }
 
+const deleteReducer = (state, action) => {
+    switch(action.type) {
+        case types.TODO_DELETE_PENDING:
+            return {
+                ...state,
+                isDeleting: true
+            };
+        case types.TODO_DELETE_FULFILLED:
+            return {
+                ...state,
+                isDeleting: false,
+                todos: state.todos.filter(elm => elm.id !== action.payload),
+                current: state.current.id === action.payload ? {} : state.current
+            };
+        case types.TODO_DELETE_REJECTED:
+            return {
+                ...state,
+                isDeleting: false
+            };
+        default:
+            return state;
+    }
+}
+
 export default  (state = initialState, action) => {
     let newState = state;
 
-    [fetchReducer, getReducer, addReducer, updateReducer].forEach(reducer => {
+    [fetchReducer, getReducer, addReducer, updateReducer, deleteReducer].forEach(reducer => {
         newState = reducer(newState, action)
     })
 

@@ -10,7 +10,7 @@ import {Link, browserHistory} from 'react-router';
 import withLoading from './../containers/WithLoading';
 import * as todoActions from './../store/actions/todo';
 
-const Todo = ({edit, data}) => {
+const Todo = ({edit, del, data}) => {
     return (
         <tr>
             <td>{data.id}</td>
@@ -21,7 +21,7 @@ const Todo = ({edit, data}) => {
             <td>
                 <button onClick={edit} className='button warning small' type='button'><i className='fa fa-pencil'></i></button>
                 &nbsp;
-                <button className='button alert small' type='button'><i className='fa fa-trash'></i></button>
+                <button onClick={del} className='button alert small' type='button'><i className='fa fa-trash'></i></button>
             </td>
         </tr>
     )
@@ -29,7 +29,8 @@ const Todo = ({edit, data}) => {
 
 Todo.propTypes = {
     data: PropTypes.object.isRequired,
-    edit: PropTypes.func.isRequired
+    edit: PropTypes.func.isRequired,
+    del: PropTypes.func.isRequired
 }
 
 const TodoList = ({todos, pagination}) => {
@@ -101,7 +102,12 @@ class TodoListContainer extends Component {
 
     getTodos() {
         return this.props.todos.map(todo => {
-            return <Todo key={todo.id} data={todo} edit={this.onEdit(todo.id)} />
+            return <Todo
+                key={todo.id}
+                data={todo}
+                edit={this.onEdit(todo.id)}
+                del={() => this.props.deleteTodo(todo.id)}
+                />
         })
     }
 
@@ -117,6 +123,7 @@ class TodoListContainer extends Component {
 
 TodoListContainer.propTypes = {
     getTodos: PropTypes.func.isRequired,
+    deleteTodo: PropTypes.func.isRequired,
     todos: PropTypes.array.isRequired,
     pagination: PropTypes.object.isRequired,
     fetchedAt: PropTypes.object,
@@ -134,7 +141,8 @@ const mapStateToProps = ({todos}) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        getTodos: () => dispatch(todoActions.getTodos())
+        getTodos: () => dispatch(todoActions.getTodos()),
+        deleteTodo: id => dispatch(todoActions.deleteTodo(id))
     }
 }
 
