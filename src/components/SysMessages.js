@@ -7,6 +7,24 @@ import {connect} from 'react-redux';
 
 import * as messagesAction from './../store/actions/sys_message';
 
+const Message = ({cn, style, data, close}) => {
+    return (
+        <div className={cn} style={style}>
+            <p>{data.title}</p>
+            <button className='close-button' type='button' onClick={close}>
+                <span aria-hidden='true'>&times;</span>
+            </button>
+        </div>
+    )
+}
+
+Message.propTypes = {
+    cn: PropTypes.string.isRequired,
+    style: PropTypes.object.isRequired,
+    data: PropTypes.object.isRequired,
+    close: PropTypes.func.isRequired
+}
+
 const SysMessages = ({messages}) => {
     return (
         <div className='row'>
@@ -47,16 +65,16 @@ class SysMessagesContainer extends Component {
         return this.props.messages.map((msg, index) => {
             const cn = `callout sys-message ${getByType(msg.type)}`;
             const style = {
-                marginTop: index === 0 ? '5px' : ''
+                marginTop: index === 0 ? 16 : 0
             }
 
             return (
-                <div key={index} className={cn} data-closable style={style}>
-                  <p>{msg.title}</p>
-                  <button className='close-button' type='button' onClick={onClose(msg.title)}>
-                    <span aria-hidden='true'>&times;</span>
-                  </button>
-                </div>
+                <Message
+                    key={`${msg.title}-${msg.type}`}
+                    cn={cn}
+                    style={style}
+                    data={msg}
+                    close={onClose(msg.title)} />
             )
         });
     }
