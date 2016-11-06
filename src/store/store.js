@@ -13,7 +13,10 @@ import messages from './reducers/sys_message';
 // middleware
 const middleware = applyMiddleware(thunk, logger());
 
-const store = createStore(combineReducers({auth, messages}), middleware);
+// initial state
+const initialState = {};
+
+const store = createStore(combineReducers({auth, messages}), initialState, middleware);
 
 export default store;
 

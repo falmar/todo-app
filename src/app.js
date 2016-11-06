@@ -6,7 +6,7 @@ import axios from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
-import {Router, Route, browserHistory} from 'react-router';
+import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 
 // store
 import store from './store/store';
@@ -16,6 +16,7 @@ import Main from './layout/Main';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
+import TodoList from './pages/TodoList';
 
 // Container
 import requireAuth from './containers/Auth';
@@ -31,9 +32,12 @@ const render = () => {
             <Router history={browserHistory}>
                 <Route component={Main}>
                     <Route path='/' component={Home}/>
-                    <Route path='/todos' component={requireAuth(Home)}/>
                     <Route path='/login' component={requireAuth(SignIn, false)}/>
                     <Route path='/signup' component={requireAuth(SignUp, false)}/>
+
+                    <Route path='/todos' >
+                        <IndexRoute component={requireAuth(TodoList)}/>
+                    </Route>
                 </Route>
             </Router>
         </Provider>,
