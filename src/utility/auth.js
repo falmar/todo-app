@@ -3,7 +3,6 @@
 // License that can be found in the LICENSE file.
 
 import axios from 'axios';
-import store from './../store/store';
 import {signInFulfilled, signOut} from './../store/actions/auth';
 
 import {getAPIUrl} from './api';
@@ -18,17 +17,16 @@ export const removeAuthHeader = () => {
     axios.defaults.headers.common.Authorization = null;
 };
 
-export const checkToken = () => {
+export const checkToken = (dispatch) => {
     return new Promise(resolve => {
-        const {dispatch} = store;
         const token = window.localStorage.getItem('token');
 
         if (token === '' || token === null) {
             resolve(true)
         } else {
-            axios.get(getAPIUrl('/checkToken'), {
+            axios.get(getAPIUrl('/checkToken/'), {
               params: {
-                token
+                access_token: token
               }
             }).then(res => {
                 dispatch(signInFulfilled(res.data))

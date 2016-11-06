@@ -23,6 +23,7 @@ import requireAuth from './containers/Auth';
 
 // misc
 import {setAxiosInterceptors} from './utility/api';
+import {checkToken} from './utility/auth';
 
 setAxiosInterceptors(store.dispatch, axios);
 
@@ -45,4 +46,6 @@ const render = () => {
     )
 }
 
-render();
+checkToken(store.dispatch).then(() => {
+    render();
+})
