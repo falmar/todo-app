@@ -3,7 +3,7 @@ FROM node:6
 COPY . /src/app
 WORKDIR /src/app
 
-ENV API_URL=http://react-api.dlavieri.com
+ENV API_URL=http://todo-api.dlavieri.com
 
 RUN npm install && \
   npm install -g bower && \
