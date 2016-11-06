@@ -50,3 +50,44 @@ export const getTodos = () => {
         }
     })
 }
+
+const addTodoPending = () => {
+    return {
+        type: types.TODO_ADD_PENDING
+    }
+}
+
+const addTodoFulfilled = payload => {
+    return {
+        type: types.TODO_ADD_FULFILLED,
+        payload
+    }
+}
+
+const addTodoRejected = () => {
+    return {
+        type: types.TODO_ADD_REJECTED
+    }
+}
+
+export const addTodo = title => {
+    return (dispatch, getState) => new Promise((resolve, reject) => {
+            const {isFetching} = getState().todos;
+
+            if(!isFetching) {
+                dispatch(addTodoPending());
+
+                axios.post(
+                    getAPIUrl('/todo/'), {
+                    title,
+                    completed: false
+                }).then(response => {
+                    dispatch(addTodoFulfilled(response.data))
+                    resolve(response)
+                }).catch(err => {
+                    dispatch(addTodoRejected())
+                    reject(err)
+                })
+            }
+    })
+}

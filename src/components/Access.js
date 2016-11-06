@@ -52,12 +52,12 @@ class AccessContainer extends Component {
       // sign in/out
       const logText = isLoggedIn ? 'Sign Out' : 'Sign In';
       const logCB =  isLoggedIn ? () => onLogout : () => null;
-      const logTo = isLoggedIn ? '' : '/login';
+      const logTo = isLoggedIn ? '' : '/login/';
 
       // register / settings
       const regText = isLoggedIn ? 'Settings' : 'Sign Up';
       const regCB = () => null;
-      const regTo = isLoggedIn ? '/settings' : '/signup';
+      const regTo = isLoggedIn ? '/settings/' : '/signup/';
 
       // menu / sign in / out
       return  (

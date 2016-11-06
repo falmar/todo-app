@@ -4,6 +4,7 @@
 
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
+import {Link} from 'react-router';
 
 import * as todoActions from './../store/actions/todo';
 import moment from 'moment';
@@ -14,8 +15,8 @@ const Todo = ({data}) => {
             <td>{data.id}</td>
             <td>{data.title}</td>
             <td>{data.completed ? 'Yes' : 'No'}</td>
-            <td>{moment(data.created_at).format('YYYY-MM-DD h:m')}</td>
-            <td>{moment(data.updated_at).format('YYYY-MM-DD h:m')}</td>
+            <td>{moment(data.created_at).format('YYYY-MM-DD HH:mm:ss')}</td>
+            <td>{moment(data.updated_at).format('YYYY-MM-DD HH:mm:ss')}</td>
             <td>
                 <button className='button warning small' type='button'><i className='fa fa-pencil'></i></button>
                 &nbsp;
@@ -39,7 +40,7 @@ const TodoList = ({todos, pagination}) => {
                         <div className='column'>
                             <div className='row align-justify'>
                                 <div className='shrink column'>
-                                    <button className='button small' type='button'><i className='fa fa-plus'/> Add TODO</button>
+                                    <Link className='button small' to='/todos/new/'><i className='fa fa-plus'/> Add TODO</Link>
                                     &nbsp;
                                     <button className='button small' type='button'><i className='fa fa-refresh'/> Refresh</button>
                                 </div>

@@ -52,7 +52,7 @@ class TopbarContainer extends Component {
                 regex: /^\/$/,
                 text: 'Home'
             }, {
-                to: '/todos',
+                to: '/todos/',
                 regex: /^\/todos/,
                 text: 'TODOs'
             }

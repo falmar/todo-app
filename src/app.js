@@ -17,6 +17,7 @@ import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import TodoList from './pages/TodoList';
+import TodoNew from './pages/TodoNew';
 
 // Container
 import requireAuth from './containers/Auth';
@@ -31,13 +32,14 @@ const render = () => {
   ReactDOM.render(
         <Provider store={store}>
             <Router history={browserHistory}>
-                <Route component={Main}>
-                    <Route path='/' component={Home}/>
-                    <Route path='/login' component={requireAuth(SignIn, false)}/>
-                    <Route path='/signup' component={requireAuth(SignUp, false)}/>
+                <Route path='/' component={Main}>
+                    <IndexRoute component={Home}/>
+                    <Route path='login/' component={requireAuth(SignIn, false)}/>
+                    <Route path='signup/' component={requireAuth(SignUp, false)}/>
 
-                    <Route path='/todos' >
+                    <Route path='todos/'>
                         <IndexRoute component={requireAuth(TodoList)}/>
+                        <Route path='new/' component={requireAuth(TodoNew)}/>
                     </Route>
                 </Route>
             </Router>
