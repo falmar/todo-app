@@ -7,12 +7,26 @@ import * as types from './../constants/todo';
 const initialState = {
     todos: [],
     isFetching: false,
+    error: false,
     isAdding: false,
     isGetting: false,
     isUpdated: false,
     fetchedAt: null,
-    pagination: {},
-    current: {}
+    pagination: {
+        total_results: 0,
+        current_page: 1,
+        pages: [],
+        links: {
+            next: {},
+            previous: {},
+            current: {}
+        }
+    },
+    current: {},
+    filters: {
+        currentPage: 1,
+        pageSize: 1
+    }
 }
 
 const fetchReducer = (state, action) => {
@@ -33,7 +47,9 @@ const fetchReducer = (state, action) => {
         case types.TODO_FETCH_REJECTED:
             return {
                 ...state,
-                isFetching: false
+                isFetching: false,
+                fetchedAt: action.payload.fetchedAt,
+                error: true
             };
         default:
             return state;
@@ -141,6 +157,29 @@ const deleteReducer = (state, action) => {
     }
 }
 
+const filterReducer = (state, action) => {
+    switch(action.type) {
+        case types.TODO_CHANGE_PAGE:
+            return {
+                ...state,
+                currentPage: action.payload
+            }
+        case types.TODO_CHANGE_PAGE_SIZE:
+            return {
+                ...state,
+                pageSize: action.payload
+            }
+        case types.TODO_FETCH_FULFILLED:
+            return {
+                ...state,
+                currentPage: action.payload.pagination.current_page,
+                currentSize: action.payload.pagination.page_size
+            }
+        default:
+            return state
+    }
+}
+
 export default  (state = initialState, action) => {
     let newState = state;
 
@@ -148,5 +187,8 @@ export default  (state = initialState, action) => {
         newState = reducer(newState, action)
     })
 
-    return newState;
+    return {
+        ...newState,
+        filters: filterReducer(newState.filters, action)
+    };
 }

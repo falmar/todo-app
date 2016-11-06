@@ -14,35 +14,42 @@ const fetchPending = () => {
     }
 }
 
-const fetchFulfilled = (payload) => {
+const fetchFulfilled = payload => {
     return {
         type: types.TODO_FETCH_FULFILLED,
         payload
     }
 }
 
-const fetchRejected = () => {
+const fetchRejected = payload => {
     return {
-        type: types.TODO_FETCH_REJECTED
+        type: types.TODO_FETCH_REJECTED,
+        payload
     }
 }
 
 export const getTodos = () => {
     return (dispatch, getState) => new Promise((resolve, reject) => {
-        const {isFetching} = getState().todos;
+        const {isFetching, filters} = getState().todos;
 
         if(!isFetching) {
             dispatch(fetchPending());
             axios.get(
-                getAPIUrl('/todo/')
-            ).then(response => {
+                getAPIUrl('/todo/'), {
+                    params: {
+                        page_size: filters.pageSize,
+                        current_page: filters.currentPage
+                    }
+            }).then(response => {
                 dispatch(fetchFulfilled({
                     ...response.data,
                     fetchedAt: moment()
                 }))
                 resolve(response)
             }).catch(err => {
-                dispatch(fetchRejected())
+                dispatch(fetchRejected({
+                    fetchedAt: moment()
+                }))
                 reject(err)
             })
         } else {
@@ -214,3 +221,13 @@ export const deleteTodo = id => {
             }
     })
 }
+
+export const changePage = payload => ({
+    type: types.TODO_CHANGE_PAGE,
+    payload
+})
+
+export const changePageSize = payload => ({
+    type: types.TODO_CHANGE_PAGE_SIZE,
+    payload
+})
