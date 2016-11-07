@@ -6,6 +6,7 @@ import * as types from './../constants/todo';
 
 const initialState = {
     todos: [],
+    reload: false,
     isFetching: false,
     error: false,
     isAdding: false,
@@ -25,7 +26,7 @@ const initialState = {
     current: {},
     filters: {
         currentPage: 1,
-        pageSize: 1
+        pageSize: 5
     }
 }
 
@@ -34,7 +35,8 @@ const fetchReducer = (state, action) => {
         case types.TODO_FETCH_PENDING:
             return {
                 ...state,
-                isFetching: true
+                isFetching: true,
+                reload: false
             };
         case types.TODO_FETCH_FULFILLED:
             return {
@@ -92,11 +94,8 @@ const addReducer = (state, action) => {
             return {
                 ...state,
                 isAdding: false,
-                todos: [
-                    ...state.todos,
-                    action.payload.todo
-                ]
-            };
+                reload: true
+            }
         case types.TODO_ADD_REJECTED:
             return {
                 ...state,
@@ -144,7 +143,7 @@ const deleteReducer = (state, action) => {
             return {
                 ...state,
                 isDeleting: false,
-                todos: state.todos.filter(elm => elm.id !== action.payload),
+                reload: true,
                 current: state.current.id === action.payload ? {} : state.current
             };
         case types.TODO_DELETE_REJECTED:
@@ -154,6 +153,18 @@ const deleteReducer = (state, action) => {
             };
         default:
             return state;
+    }
+}
+
+const miscReducer = (state, action) => {
+    switch(action.type) {
+        case types.TODO_RELOAD:
+            return {
+                ...state,
+                reload: true
+            }
+        default:
+        return state;
     }
 }
 
@@ -176,14 +187,21 @@ const filterReducer = (state, action) => {
                 currentSize: action.payload.pagination.page_size
             }
         default:
-            return state
+            return state;
     }
 }
 
 export default  (state = initialState, action) => {
     let newState = state;
 
-    [fetchReducer, getReducer, addReducer, updateReducer, deleteReducer].forEach(reducer => {
+    [
+        fetchReducer,
+        getReducer,
+        addReducer,
+        updateReducer,
+        deleteReducer,
+        miscReducer
+    ].forEach(reducer => {
         newState = reducer(newState, action)
     })
 

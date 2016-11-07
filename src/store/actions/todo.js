@@ -231,3 +231,7 @@ export const changePageSize = payload => ({
     type: types.TODO_CHANGE_PAGE_SIZE,
     payload
 })
+
+export const reload = () => ({
+    type: types.TODO_RELOAD
+})

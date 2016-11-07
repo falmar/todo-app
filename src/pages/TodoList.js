@@ -33,7 +33,7 @@ Todo.propTypes = {
     del: PropTypes.func.isRequired
 }
 
-const TodoList = ({todos, pagination, changePageSize, pageSize}) => {
+const TodoList = ({todos, pagination, changePageSize, pageSize, reload}) => {
 
     return (
         <div className='row'>
@@ -46,7 +46,7 @@ const TodoList = ({todos, pagination, changePageSize, pageSize}) => {
                                 <div className='shrink column align-self-middle'>
                                     <Link className='button small' to='/todos/new/'><i className='fa fa-plus'/> Add TODO</Link>
                                     &nbsp;
-                                    <button className='button small' type='button'><i className='fa fa-refresh'/> Refresh</button>
+                                    <button onClick={reload} className='button small' type='button'><i className='fa fa-refresh'/> Refresh</button>
                                 </div>
                                 <div className='shrink column'>
                                     <div className='row'>
@@ -111,7 +111,8 @@ TodoList.propTypes = {
     pagination: PropTypes.node.isRequired,
     loading: PropTypes.bool.isRequired,
     pageSize: PropTypes.number.isRequired,
-    changePageSize: PropTypes.func.isRequired
+    changePageSize: PropTypes.func.isRequired,
+    reload: PropTypes.func.isRequired
 }
 
 class TodoListContainer extends Component {
@@ -121,25 +122,20 @@ class TodoListContainer extends Component {
         this.onChangePageSize = this.onChangePageSize.bind(this)
     }
     componentWillMount() {
-        const {fetchedAt, fetchError, pagination, filters} = this.props;
-        const loadByTime = !fetchedAt || !moment().isBefore(moment(fetchedAt).add(5, 'm'))
-        const pageChanged = pagination.current_page !== filters.currentPage
-        const sizeChanged = pagination.page_size !== filters.pageSize
-
-        if (!fetchError && (loadByTime || pageChanged || sizeChanged)) {
-            this.props.getTodos().catch(() => {
-                // error ocurred
-            });
-        }
+        this.loadTodos()
     }
 
     componentDidUpdate() {
-        const {fetchedAt, fetchError, pagination, filters} = this.props;
+        this.loadTodos()
+    }
+
+    loadTodos() {
+        const {fetchedAt, fetchError, pagination, filters, reload} = this.props;
         const loadByTime = !fetchedAt || !moment().isBefore(moment(fetchedAt).add(5, 'm'))
         const pageChanged = pagination.current_page !== filters.currentPage
         const sizeChanged = pagination.page_size !== filters.pageSize
 
-        if (!fetchError && (loadByTime || pageChanged || sizeChanged)) {
+        if (!fetchError && (loadByTime || pageChanged || sizeChanged || reload)) {
             this.props.getTodos().catch(() => {
                 // error ocurred
             });
@@ -195,6 +191,7 @@ class TodoListContainer extends Component {
                 loading={this.props.loading}
                 changePageSize={this.onChangePageSize}
                 pageSize={this.props.filters.pageSize}
+                reload={this.props.reloadTodos}
                     />
     }
 }
@@ -209,7 +206,9 @@ TodoListContainer.propTypes = {
     loading: PropTypes.bool.isRequired,
     fetchError: PropTypes.bool.isRequired,
     changePage: PropTypes.func.isRequired,
-    filters: PropTypes.object.isRequired
+    filters: PropTypes.object.isRequired,
+    reloadTodos: PropTypes.func.isRequired,
+    reload: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = ({todos}) => {
@@ -219,13 +218,15 @@ const mapStateToProps = ({todos}) => {
         todos: todos.todos,
         pagination: todos.pagination,
         filters: todos.filters,
-        fetchError: todos.error
+        fetchError: todos.error,
+        reload: todos.reload
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         getTodos: () => dispatch(todoActions.getTodos()),
+        reloadTodos: () => dispatch(todoActions.reload()),
         deleteTodo: id => dispatch(todoActions.deleteTodo(id)),
         changePage: page => dispatch(todoActions.changePage(page)),
         changePageSize: size => dispatch(todoActions.changePageSize(size))
