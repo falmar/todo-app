@@ -10,7 +10,9 @@ RUN npm install && \
   bower install --allow-root && \
   npm run sass-build && \
   npm run prod && \
-  rm -rf bower_components
+  rm -rf bower_components && \
+  rm -rf node_modules && \
+  npm install express express-history-api-fallback
 
 expose 80
 
