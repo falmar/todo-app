@@ -77,13 +77,11 @@ class TodoEditContainer extends Component {
 
     onChange(key) {
         return event => {
-            if(key === 'completed') {
-                this.setState({[key]: event.currentTarget.value === 'true'});
+            const val = event.currentTarget.value;
 
-                return
-            }
-
-            this.setState({[key]: event.currentTarget.value});
+            this.setState({
+                [key]: key === 'completed' ? val === 'true' : val
+            });
         }
     }
 
@@ -109,7 +107,7 @@ class TodoEditContainer extends Component {
     }
 
     render() {
-        const elm = () => <TodoEdit
+        const box = <TodoEdit key={"my_key"}
             submit={this.onSubmit}
             change={this.onChange}
             loading={this.props.loading}
@@ -121,8 +119,7 @@ class TodoEditContainer extends Component {
             }}
             completedOptions={this.getCompletedOptions()}/>
 
-
-        return withLoading(elm, this.props.loading)
+        return withLoading(box, this.props.loading)
     }
 }
 

@@ -5,17 +5,17 @@
 import React, {PropTypes} from 'react';
 
 const Loading = ({header}) => {
-    const Head = () => <h3>Loading...</h3>
+    const head = <h3>Loading...</h3>
 
     if(header) {
-        return Head
+        return head
     }
 
     return (
         <div className='row align-center'>
             <div className='small-12 medium-6 large-4 column'>
                 <div className='box'>
-                    <Head />
+                    {head}
                 </div>
             </div>
         </div>
@@ -27,11 +27,11 @@ Loading.propTypes = {
 }
 
 const WithLoading = (Comp, loading = true, header = false) => {
-    const Container = (props) => {
-        return loading ? <Loading header={header} /> : <Comp {...props} />
+    if(loading) {
+        return <Loading header={header} />
     }
 
-    return <Container />
+    return Comp
 }
 
 export default WithLoading
