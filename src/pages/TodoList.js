@@ -40,11 +40,7 @@ const PageSizeFilter = ({change, pageSize}) => {
             </div>
             <div className='columns'>
                 <select onChange={change} value={pageSize}>
-                    <option>1</option>
-                    <option>5</option>
-                    <option>15</option>
-                    <option>30</option>
-                    <option>50</option>
+                    {[5, 15, 30, 50].map((val, index) => <option key={index + val} value={val}>{val}</option>)}
                 </select>
             </div>
         </div>
@@ -99,7 +95,6 @@ const TodoList = ({completedFilter, todos, pagination, pageSizeFilter, reload}) 
                                         <div className='small-12 medium-4 large-3 column'>
                                             {completedFilter}
                                         </div>
-
                                         <div className='small-12 medium-4 large-3 column'>
                                             {pageSizeFilter}
                                         </div>

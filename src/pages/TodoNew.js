@@ -4,31 +4,30 @@
 
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {Link, browserHistory} from 'react-router';
+import {browserHistory} from 'react-router';
 
 import * as todoActions from './../store/actions/todo';
 
-const TodoNew = ({change, submit, title}) => {
+import Form from './../components/Form';
+import Input from './../components/Form/Input';
+
+const titleInput = {
+    label: 'Title',
+    name: 'title',
+    type: 'text'
+}
+
+const TodoNew = ({cancel, submit, title}) => {
     return (
         <div className='row align-center'>
             <div className='small-12 medium-6 large-4 column'>
                 <div className='box'>
-                    <h3>New Todo</h3>
-                    <form onSubmit={submit}>
-                        <label>
-                            Title:
-                            <input type='text' onChange={change('title')} value={title} />
-                        </label>
-
-                        <div className='row text-center'>
-                            <div className=' column'>
-                                <button className='button' type='submit'>Save</button>
-                            </div>
-                            <div className=' column'>
-                                <Link to='/todos/' className='button secondary'>Cancel</Link>
-                            </div>
-                        </div>
-                    </form>
+                    <Form
+                        submit={submit}
+                        cancel={cancel}
+                        header='New Todo'>
+                        <Input {...title} />
+                    </Form>
                 </div>
             </div>
         </div>
@@ -36,9 +35,10 @@ const TodoNew = ({change, submit, title}) => {
 }
 
 TodoNew.propTypes = {
+    cancel: PropTypes.func.isRequired,
     change: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
-    title: PropTypes.string.isRequired
+    title: PropTypes.object.isRequired
 }
 
 class TodoNewContainer extends Component {
@@ -73,11 +73,21 @@ class TodoNewContainer extends Component {
         })
     }
 
+    onCancel() {
+        browserHistory.push('/todos/');
+    }
+
     render() {
         return <TodoNew
             submit={this.onSubmit}
             change={this.onChange}
-            {...this.state}/>
+            cancel={this.onCancel}
+            title={{
+                ...titleInput,
+                change: this.onChange,
+                value: this.state.title
+            }}
+            />
     }
 }
 
