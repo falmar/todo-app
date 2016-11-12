@@ -3,8 +3,8 @@
 // License that can be found in the LICENSE file.
 
 import React from 'react'
+import ReactDOM from 'react-dom/server';
 import {match, RouterContext} from 'react-router';
-import {renderToString} from 'react-dom/server';
 import {createStore, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
@@ -42,17 +42,17 @@ const template = (html, preloadedState) => `
 </html>
 `
 
-export default (req, res) => {
+export default (next) => (req, res) => {
     match({routes: Routes, location: req.url}, (err, redirect, props) => {
         if (err) {
-            res.status(500).send('opps');
+            return res.status(500).send('opps');
         } else if(redirect) {
-            res.redirect(302, redirect.pathname + redirect.search);
+            return res.redirect(302, redirect.pathname + redirect.search);
         } else if(props) {
             // create store
             const store = createStore(App, middleware);
 
-            const html = renderToString(
+            const html = ReactDOM.renderToString(
                 <Provider store={store}>
                     <RouterContext {...props} />
                 </Provider>
@@ -60,10 +60,10 @@ export default (req, res) => {
 
             const preloadedState = store.getState();
 
-            res.send(template(html, preloadedState))
-        } else {
-            res.status(404)
+            return res.send(template(html, preloadedState));
         }
+
+        return next(req, res)
     });
 
 }

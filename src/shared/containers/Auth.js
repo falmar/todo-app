@@ -23,11 +23,12 @@ export default(Comp, hide = true) => {
 
         checkAuth() {
             const {isLoggedIn} = this.props;
+            const {router} = this.context;
 
             if (!isLoggedIn && hide) {
-                this.context.router.push({pathname: '/login/'});
+                router.push({pathname: '/login/'});
             } else if (isLoggedIn && !hide) {
-                this.context.router.push({pathname: '/'});
+                router.push({pathname: '/'});
             }
         }
 

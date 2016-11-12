@@ -3,7 +3,7 @@ FROM node:6
 COPY . /src/app
 WORKDIR /src/app
 
-ENV API_URL http://todo-api.dlavieri.com
+ENV API_URL=http://todo-api.dlavieri.com PORT=80
 
 RUN npm install && \
   npm install -g bower && \
@@ -11,8 +11,7 @@ RUN npm install && \
   npm run sass-build && \
   npm run prod && \
   rm -rf bower_components && \
-  rm -rf node_modules && \
-  npm install express express-history-api-fallback
+  npm prune --production
 
 expose 80
 

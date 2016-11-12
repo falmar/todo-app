@@ -10,8 +10,8 @@ import handle from './handle';
 const app = express()
 const root = path.join(__dirname, 'public')
 
-app.use(express.static(root))
+app.use(handle(express.static(root)))
 
-app.use(handle)
+// app.use(express.static(root))
 
 app.listen(3000);
