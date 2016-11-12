@@ -4,16 +4,20 @@
 
 import React, {Component, PropTypes} from 'react';
 
-const Form = ({header, submit, children, cancel}) => {
+import Input from './Form/Input';
+import Select from './Form/Select';
+
+export {Input, Select}
+
+const Form = ({header, submit, submitButton, children, cancel, reset}) => {
     return (
         <form onSubmit={submit}>
             {header}
             {children}
             <div className='row text-center'>
-                <div className='column'>
-                    <button className='button' type='submit'>Submit</button>
-                </div>
+                {submitButton}
                 {cancel}
+                {reset}
             </div>
         </form>
     )
@@ -22,6 +26,7 @@ const Form = ({header, submit, children, cancel}) => {
 Form.propTypes = {
     header: PropTypes.node,
     submit: PropTypes.func.isRequired,
+    submitButton: PropTypes.node.isRequired,
     cancel: PropTypes.node,
     reset: PropTypes.node,
     children: PropTypes.node.isRequired
@@ -34,6 +39,18 @@ class FormContainer extends Component {
         return typeof props.header === 'string' && props.header.length > 0
         ? <h3>{props.header}</h3>
         : ''
+    }
+
+    getSubmitButton() {
+        const {loading} = this.props;
+        const cn = `button ${loading ? 'disabled' : ''}`;
+
+        return <div className='column'>
+            <button
+            type='submit'
+            className={cn}
+            >Submit</button>
+        </div>
     }
 
     getResetButton() {
@@ -64,12 +81,16 @@ class FormContainer extends Component {
             : null
     }
 
+    preventDefault(event) {
+        event.preventDefault()
+    }
 
     render() {
         const {props} = this;
 
         return <Form
-            submit={props.submit}
+            submit={!props.loading ? props.submit : this.preventDefault}
+            submitButton={this.getSubmitButton()}
             cancel={this.getCancelButton()}
             reset={this.getResetButton()}
             header={this.getHeader()}
@@ -83,7 +104,8 @@ FormContainer.propTypes = {
     cancel: PropTypes.func,
     reset: PropTypes.func,
     children: PropTypes.node.isRequired,
-    header: PropTypes.string
+    header: PropTypes.string,
+    loading: PropTypes.bool
 }
 
 export default FormContainer;

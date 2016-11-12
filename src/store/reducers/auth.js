@@ -16,6 +16,17 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch(action.type) {
+    case types.SIGN_UP_PENDING:
+        return {
+            ...state,
+            loading: true
+        }
+    case types.SIGN_UP_FULFILLED:
+    case types.SIGN_UP_REJECTED:
+        return {
+            ...state,
+            loading: false
+        }
     case types.SIGN_IN_PENDING:
       return {
         ...state,

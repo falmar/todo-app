@@ -8,37 +8,22 @@ import {browserHistory} from 'react-router';
 
 import * as authActions from './../store/actions/auth';
 
-const SignUp = ({disabled, change, submit, name, email, password}) => {
-    const bc = `button ${disabled}`
+import Form, {Input} from './../components/Form';
 
+const nameInput = {type: 'text', name: 'name', label: 'Name', value: ''}
+const emailInput = {type: 'email', name: 'email', label: 'Email', value: ''}
+const passwordInput = {type: 'password', name: 'password', label: 'Password', value: ''}
+
+const SignUp = ({loading, submit, name, email, password}) => {
     return (
         <div className='row align-center'>
             <div className='small-12 medium-8 large-6 column'>
                 <div className='box'>
-                    <form onSubmit={submit}>
-                        <h3>Sign Up</h3>
-
-                        <label>
-                            Name:
-                            <input type='text' onChange={change('name')} value={name} />
-                        </label>
-
-                        <label>
-                            Email:
-                            <input type='email' onChange={change('email')} value={email} />
-                        </label>
-
-                        <label>
-                            Password:
-                            <input type='password' onChange={change('password')} value={password} />
-                        </label>
-
-                        <div className='row text-center'>
-                            <div className='column'>
-                                <button type='submit' className={bc}>Sign Up!</button>
-                            </div>
-                        </div>
-                    </form>
+                    <Form submit={submit} loading={loading} header='Sign Up'>
+                        <Input {...name} />
+                        <Input {...email} />
+                        <Input {...password} />
+                    </Form>
                 </div>
             </div>
         </div>
@@ -46,12 +31,11 @@ const SignUp = ({disabled, change, submit, name, email, password}) => {
 }
 
 SignUp.propTypes = {
-    change: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
-    disabled: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired
+    loading: PropTypes.bool.isRequired,
+    name: PropTypes.object.isRequired,
+    email: PropTypes.object.isRequired,
+    password: PropTypes.object.isRequired
 }
 
 class SignUpContainer extends Component {
@@ -80,7 +64,7 @@ class SignUpContainer extends Component {
         // execute sign up
         this.props.signUp(this.state).then(() => {
             this.setState({name: '', email: '', password: ''});
-            browserHistory.push('/login')
+            browserHistory.push('/login/')
         }).catch(() => {
             // error ocurred
             this.setState({password: ''});
@@ -88,24 +72,25 @@ class SignUpContainer extends Component {
     }
 
     render() {
-        const disabled = this.props.logged ? 'disabled' : '';
-
         return <SignUp
-            disabled={disabled}
+            loading={this.props.loading}
             change={this.onChange}
             submit={this.onSubmit}
-            {...this.state} />
+            email={{...emailInput, change: this.onChange, value: this.state.email}}
+            password={{...passwordInput, change: this.onChange, value: this.state.password}}
+            name={{...nameInput, change: this.onChange, value: this.state.name}}
+            />
     }
 }
 
 SignUpContainer.propTypes = {
-    logged: PropTypes.bool.isRequired,
+    loading: PropTypes.bool.isRequired,
     signUp: PropTypes.func.isRequired
 }
 
 const mapStateToProps = ({auth}) => {
     return {
-        logged: auth.logged
+        loading: auth.loading
     }
 }
 

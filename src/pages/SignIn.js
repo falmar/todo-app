@@ -9,32 +9,20 @@ import {browserHistory} from 'react-router';
 import * as authActions from './../store/actions/auth';
 import {setAuthHeader} from './../utility/auth';
 
-const SignIn = ({disabled, submit, change, email, password}) => {
-    const cn = `button ${disabled}`;
+import Form, {Input} from './../components/Form';
 
+const emailInput = {type: 'email', name: 'email', label: 'Email', value: ''}
+const passwordInput = {type: 'password', name: 'password', label: 'Password', value: ''}
+
+const SignIn = ({loading, submit, email, password}) => {
     return (
         <div className='row align-center'>
             <div className='small-12 medium-8 large-6 column'>
                 <div className='box'>
-                    <form method='POST' onSubmit={submit}>
-                        <h3>Sign In</h3>
-
-                        <label>
-                            Email:
-                            <input type='email' onChange={change('email')} value={email} />
-                        </label>
-
-                        <label>
-                            Password:
-                            <input type='password' onChange={change('password')} value={password} />
-                        </label>
-
-                        <div className='row text-center'>
-                            <div className='column'>
-                                <button type='submit' className={cn}>Sign In!</button>
-                            </div>
-                        </div>
-                    </form>
+                    <Form submit={submit} loading={loading} header='Sign In'>
+                        <Input {...email} />
+                        <Input {...password} />
+                    </Form>
                 </div>
             </div>
         </div>
@@ -42,11 +30,11 @@ const SignIn = ({disabled, submit, change, email, password}) => {
 };
 
 SignIn.propTypes = {
-    disabled: PropTypes.string.isRequired,
     submit: PropTypes.func.isRequired,
     change: PropTypes.func.isRequired,
-    email: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired
+    email: PropTypes.object.isRequired,
+    password: PropTypes.object.isRequired,
+    loading: PropTypes.bool.isRequired
 }
 
 class SignInContainer extends Component {
@@ -89,13 +77,16 @@ class SignInContainer extends Component {
     render() {
         const {loading} = this.props;
 
-        const disabled = loading ? 'disabled' : '';
-
         return <SignIn
-            disabled={disabled}
+            loading={loading}
             submit={this.onSubmit}
             change={this.onChange}
-            {...this.state} />
+            email={{
+                ...emailInput, change: this.onChange, value: this.state.email
+            }}
+            password={{
+                ...passwordInput, change: this.onChange, value: this.state.password
+            }} />
     }
 }
 

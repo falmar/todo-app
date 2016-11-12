@@ -36,7 +36,7 @@ const signIn = (email, password) => {
             const {auth} = getState();
 
             if(!auth.loading) {
-                dispatch(signInPending);
+                dispatch(signInPending());
 
                 axios.post(getAPIUrl('/login/'), {
                     email,

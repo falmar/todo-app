@@ -8,8 +8,7 @@ import {browserHistory} from 'react-router';
 
 import * as todoActions from './../store/actions/todo';
 
-import Form from './../components/Form';
-import Input from './../components/Form/Input';
+import Form, {Input} from './../components/Form';
 
 const titleInput = {
     label: 'Title',
