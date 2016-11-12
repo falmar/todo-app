@@ -7,7 +7,7 @@ module.exports = {
     devtool: debug
         ? 'inline-sourcemap'
         : null,
-    entry: path.join(__dirname, 'src', 'app.js'),
+    entry: path.join(__dirname, 'src', 'client', 'index.js'),
     module: {
         loaders: [
             {

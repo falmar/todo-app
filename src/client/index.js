@@ -9,24 +9,24 @@ import {Provider} from 'react-redux';
 import {Router, Route, IndexRoute, browserHistory} from 'react-router';
 
 // store
-import store from './store/store';
+import store from './../shared/store/store';
 
 // Views
-import Main from './layout/Main';
-import Home from './pages/Home';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
-import TodoList from './pages/TodoList';
-import TodoNew from './pages/TodoNew';
-import TodoEdit from './pages/TodoEdit';
+import Main from './../shared/layout/Main';
+import Home from './../shared/pages/Home';
+import SignIn from './../shared/pages/SignIn';
+import SignUp from './../shared/pages/SignUp';
+import TodoList from './../shared/pages/TodoList';
+import TodoNew from './../shared/pages/TodoNew';
+import TodoEdit from './../shared/pages/TodoEdit';
 
 // Container
-import requireAuth from './containers/Auth';
-import withRouter from './containers/WithRouter';
+import requireAuth from './../shared/containers/Auth';
+import withRouter from './../shared/containers/WithRouter';
 
 // misc
-import {setAxiosInterceptors} from './utility/api';
-import {checkToken} from './utility/auth';
+import {setAxiosInterceptors} from './../shared/utility/api';
+import {checkToken} from './../shared/utility/auth';
 
 setAxiosInterceptors(store.dispatch, axios);
 
