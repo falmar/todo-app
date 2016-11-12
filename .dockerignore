@@ -4,6 +4,7 @@ npm-debug.log
 bower_components
 node_modules
 notes
-public/app.min.js
-public/css/app.min.css
+/public/*.app.min.js
+/public/app.min.js
+/public/css/app.min.css
 coverage

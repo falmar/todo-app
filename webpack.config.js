@@ -18,13 +18,13 @@ module.exports = {
                     presets: [
                         'react', 'es2015', 'stage-0'
                     ],
-                    plugins: ['react-html-attrs', 'transform-class-properties', 'transform-decorators-legacy']
+                    plugins: ['react-html-attrs', 'transform-class-properties']
                 }
             }, {
                 test: /\.css$/,
                 loader: 'style!css!'
             },{
-                test: /\.json$/, 
+                test: /\.json$/,
                 loader: 'json-loader'
             }
         ]
@@ -42,13 +42,16 @@ module.exports = {
         // 'jquery': 'jQuery'
     },
     plugins: debug
-        ? [new webpack.DefinePlugin({
+        ? [
+            new webpack.DefinePlugin({
                 'process.env': {
                     'NODE_ENV': JSON.stringify('development'),
                     'API_URL': JSON.stringify(process.env.API_URL || 'http://localhost:8080')
                 }
-            })]
-        : [
+            }),
+            new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/)
+        ] : [
+            new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
             new webpack.optimize.DedupePlugin(),
             new webpack.optimize.OccurenceOrderPlugin(),
             new webpack.optimize.UglifyJsPlugin({
