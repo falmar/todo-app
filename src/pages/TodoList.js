@@ -10,6 +10,52 @@ import {Link, browserHistory} from 'react-router';
 import Pagination from './../components/Pagination';
 import * as todoActions from './../store/actions/todo';
 
+const CompletedFilter = ({change, completed}) => {
+    return (
+        <div className='row'>
+            <div className='column'>
+              <label htmlFor='middle-label' className='text-right middle'>Completed:</label>
+            </div>
+            <div className='column'>
+                <select onChange={change} value={completed}>
+                    <option value='-1'>All</option>
+                    <option value='1'>Yes</option>
+                    <option value='0'>No</option>
+                </select>
+            </div>
+        </div>
+    )
+}
+
+CompletedFilter.propTypes = {
+    change: PropTypes.func.isRequired,
+    completed: PropTypes.number.isRequired
+}
+
+const PageSizeFilter = ({change, pageSize}) => {
+    return (
+        <div className='row'>
+            <div className='columns'>
+              <label htmlFor='middle-label' className='text-right middle'>PageSize:</label>
+            </div>
+            <div className='columns'>
+                <select onChange={change} value={pageSize}>
+                    <option>1</option>
+                    <option>5</option>
+                    <option>15</option>
+                    <option>30</option>
+                    <option>50</option>
+                </select>
+            </div>
+        </div>
+    )
+}
+
+PageSizeFilter.propTypes = {
+    change: PropTypes.func.isRequired,
+    pageSize: PropTypes.number.isRequired
+}
+
 const Todo = ({edit, del, data}) => {
     return (
         <tr>
@@ -33,7 +79,7 @@ Todo.propTypes = {
     del: PropTypes.func.isRequired
 }
 
-const TodoList = ({todos, pagination, changePageSize, pageSize, reload}) => {
+const TodoList = ({completedFilter, todos, pagination, pageSizeFilter, reload}) => {
 
     return (
         <div className='row'>
@@ -50,25 +96,14 @@ const TodoList = ({todos, pagination, changePageSize, pageSize, reload}) => {
                                 </div>
                                 <div className='shrink column'>
                                     <div className='row'>
-                                        <div className='column'>
-                                            <div className='row'>
-                                                <div className='columns'>
-                                                  <label htmlFor='middle-label' className='text-right middle'>PageSize:</label>
-                                                </div>
-                                                <div className='columns'>
-                                                    <select onChange={changePageSize} value={pageSize}>
-                                                        <option>1</option>
-                                                        <option>5</option>
-                                                        <option>15</option>
-                                                        <option>30</option>
-                                                        <option>50</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-
+                                        <div className='small-12 medium-4 large-3 column'>
+                                            {completedFilter}
                                         </div>
-                                        <div className='column align-self-middle' style={{whiteSpace: 'nowrap'}}>
+
+                                        <div className='small-12 medium-4 large-3 column'>
+                                            {pageSizeFilter}
+                                        </div>
+                                        <div className='small-12 medium-4 large-3 column align-self-middle' style={{whiteSpace: 'nowrap'}}>
                                             {pagination}
                                         </div>
                                     </div>
@@ -110,16 +145,16 @@ TodoList.propTypes = {
     todos: PropTypes.node.isRequired,
     pagination: PropTypes.node.isRequired,
     loading: PropTypes.bool.isRequired,
-    pageSize: PropTypes.number.isRequired,
-    changePageSize: PropTypes.func.isRequired,
-    reload: PropTypes.func.isRequired
+    pageSizeFilter: PropTypes.node.isRequired,
+    reload: PropTypes.func.isRequired,
+    completedFilter: PropTypes.node.isRequired
 }
 
 class TodoListContainer extends Component {
     constructor(props) {
         super(props)
 
-        this.onChangePageSize = this.onChangePageSize.bind(this)
+        this.state = {completed: -1}
     }
     componentWillMount() {
         this.loadTodos()
@@ -134,8 +169,13 @@ class TodoListContainer extends Component {
         const loadByTime = !fetchedAt || !moment().isBefore(moment(fetchedAt).add(5, 'm'))
         const pageChanged = pagination.current_page !== filters.currentPage
         const sizeChanged = pagination.page_size !== filters.pageSize
+        const completedChanged = this.state.completed !== filters.completed
 
-        if (!fetchError && (loadByTime || pageChanged || sizeChanged || reload)) {
+        if(completedChanged) {
+            this.setState({completed: filters.completed})
+        }
+
+        if (!fetchError && (loadByTime || pageChanged || sizeChanged || reload || completedChanged)) {
             this.props.getTodos().catch(() => {
                 // error ocurred
             });
@@ -180,8 +220,27 @@ class TodoListContainer extends Component {
                     />
     }
 
-    onChangePageSize(event) {
-        this.props.changePageSize(parseInt(event.target.value, 10))
+    getCompletedFilter() {
+        const change = event => this.props.changeFilter(
+            parseInt(event.currentTarget.value, 10)
+        )
+
+        return <CompletedFilter
+            change={change}
+            completed={this.props.filters.completed}
+            />
+    }
+
+    getPageSizeFilter() {
+        const change = event => this.props.changePageSize(
+            parseInt(event.target.value, 10)
+        )
+
+
+        return <PageSizeFilter
+            change={change}
+            pageSize={this.props.filters.pageSize}
+            />
     }
 
     render() {
@@ -189,9 +248,10 @@ class TodoListContainer extends Component {
                 todos={this.getTodos()}
                 pagination={this.getPagination()}
                 loading={this.props.loading}
-                changePageSize={this.onChangePageSize}
                 pageSize={this.props.filters.pageSize}
                 reload={this.props.reloadTodos}
+                completedFilter={this.getCompletedFilter()}
+                pageSizeFilter={this.getPageSizeFilter()}
                     />
     }
 }
@@ -208,7 +268,8 @@ TodoListContainer.propTypes = {
     changePage: PropTypes.func.isRequired,
     filters: PropTypes.object.isRequired,
     reloadTodos: PropTypes.func.isRequired,
-    reload: PropTypes.bool.isRequired
+    reload: PropTypes.bool.isRequired,
+    changeFilter: PropTypes.func.isRequired
 }
 
 const mapStateToProps = ({todos}) => {
@@ -229,7 +290,8 @@ const mapDispatchToProps = dispatch => {
         reloadTodos: () => dispatch(todoActions.reload()),
         deleteTodo: id => dispatch(todoActions.deleteTodo(id)),
         changePage: page => dispatch(todoActions.changePage(page)),
-        changePageSize: size => dispatch(todoActions.changePageSize(size))
+        changePageSize: size => dispatch(todoActions.changePageSize(size)),
+        changeFilter: completed => dispatch(todoActions.changeCompleted(completed))
     }
 }
 

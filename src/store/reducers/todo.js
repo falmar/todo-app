@@ -26,7 +26,8 @@ const initialState = {
     current: {},
     filters: {
         currentPage: 1,
-        pageSize: 5
+        pageSize: 5,
+        completed: -1
     }
 }
 
@@ -179,6 +180,11 @@ const filterReducer = (state, action) => {
             return {
                 ...state,
                 pageSize: action.payload
+            }
+        case types.TODO_CHANGE_COMPLETED:
+            return {
+                ...state,
+                completed: action.payload
             }
         case types.TODO_FETCH_FULFILLED:
             return {

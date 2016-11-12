@@ -33,12 +33,20 @@ export const getTodos = () => {
         const {isFetching, filters} = getState().todos;
 
         if(!isFetching) {
+
+            const filterArray = [];
+
+            if (filters.completed !== -1) {
+                filterArray.push(`completed:${filters.completed}`)
+            }
+
             dispatch(fetchPending());
             axios.get(
                 getAPIUrl('/todo/'), {
                     params: {
                         page_size: filters.pageSize,
-                        current_page: filters.currentPage
+                        current_page: filters.currentPage,
+                        filters: filterArray.join(',')
                     }
             }).then(response => {
                 dispatch(fetchFulfilled({
@@ -229,6 +237,11 @@ export const changePage = payload => ({
 
 export const changePageSize = payload => ({
     type: types.TODO_CHANGE_PAGE_SIZE,
+    payload
+})
+
+export const changeCompleted = payload => ({
+    type: types.TODO_CHANGE_COMPLETED,
     payload
 })
 
