@@ -18,22 +18,28 @@ import TodoEdit from './../shared/pages/TodoEdit';
 import requireAuth from './../shared/containers/Auth';
 import withRouter from './../shared/containers/WithRouter';
 
-const Routes = () => {
+const Routes = [
+    <Route path='/' component={Main}>
+        <IndexRoute component={Home}/>
+        <Route path='login/' component={requireAuth(SignIn, false)}/>
+        <Route path='signup/' component={requireAuth(SignUp, false)}/>
+
+        <Route path='todos/'>
+            <IndexRoute component={requireAuth(TodoList)}/>
+            <Route path='new/' component={requireAuth(TodoNew)}/>
+            <Route path=':id/edit' component={withRouter(requireAuth(TodoEdit))}/>
+        </Route>
+    </Route>
+]
+
+export {Routes};
+
+const BaseRouter = () => {
     return (
         <Router history={browserHistory}>
-            <Route path='/' component={Main}>
-                <IndexRoute component={Home}/>
-                <Route path='login/' component={requireAuth(SignIn, false)}/>
-                <Route path='signup/' component={requireAuth(SignUp, false)}/>
-
-                <Route path='todos/'>
-                    <IndexRoute component={requireAuth(TodoList)}/>
-                    <Route path='new/' component={requireAuth(TodoNew)}/>
-                    <Route path=':id/edit' component={withRouter(requireAuth(TodoEdit))}/>
-                </Route>
-            </Route>
+            {Routes}
         </Router>
     )
 }
 
-export default Routes;
+export default BaseRouter;

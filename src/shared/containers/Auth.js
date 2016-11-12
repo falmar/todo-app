@@ -4,7 +4,6 @@
 
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {browserHistory} from 'react-router';
 
 export default(Comp, hide = true) => {
     class AuthContainer extends Component {
@@ -26,9 +25,9 @@ export default(Comp, hide = true) => {
             const {isLoggedIn} = this.props;
 
             if (!isLoggedIn && hide) {
-                browserHistory.push('/login/');
+                this.context.router.push({pathname: '/login/'});
             } else if (isLoggedIn && !hide) {
-                browserHistory.push('/');
+                this.context.router.push({pathname: '/'});
             }
         }
 
@@ -46,6 +45,10 @@ export default(Comp, hide = true) => {
     AuthContainer.propTypes = {
         children: PropTypes.node,
         isLoggedIn: PropTypes.bool.isRequired
+    }
+
+    AuthContainer.contextTypes = {
+        router: PropTypes.object.isRequired
     }
 
     const mapStateToProps = ({auth}) => {

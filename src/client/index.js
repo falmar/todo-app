@@ -11,10 +11,10 @@ import thunk from 'redux-thunk';
 import logger from 'redux-logger'
 
 // routes
-import Routes from './../shared/Routes';
+import BaseRouter from './../shared/Routes';
 
 // import store reducers
-import app from './../shared/store/app';
+import App from './../shared/store/App';
 
 // misc
 import {setAxiosInterceptors} from './../shared/utility/api';
@@ -23,18 +23,17 @@ import {checkToken} from './../shared/utility/auth';
 // store middleware
 const middleware = applyMiddleware(thunk, logger());
 
-// store initial state
-const initialState = {};
+const preloadedState = window.__PRELOADED_STATE__ ? window.__PRELOADED_STATE__ : {}
 
 // create store
-const store = createStore(app, initialState, middleware);
+const store = createStore(App, preloadedState, middleware);
 
 setAxiosInterceptors(store.dispatch, axios);
 
 const render = () => {
   ReactDOM.render(
         <Provider store={store}>
-            <Routes />
+            <BaseRouter />
         </Provider>,
         document.getElementById('app')
     )

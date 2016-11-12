@@ -14,7 +14,6 @@ export const setAxiosInterceptors = (dispatch, axios) => {
         }
     }
 
-
     // Add a request interceptor
     axios.interceptors.request.use(config => {
         // Do something before request is sent
