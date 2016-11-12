@@ -11,7 +11,7 @@ const initialState = {
     error: false,
     isAdding: false,
     isGetting: false,
-    isUpdated: false,
+    isUpdating: false,
     fetchedAt: null,
     pagination: {
         total_results: 0,
@@ -112,12 +112,12 @@ const updateReducer = (state, action) => {
         case types.TODO_UPDATE_PENDING:
             return {
                 ...state,
-                isUpdate: true
+                isUpdating: true
             };
         case types.TODO_UPDATE_FULFILLED:
             return {
                 ...state,
-                isUpdate: false,
+                isUpdating: false,
                 todos: state.todos.map(elm => {
                     return elm.id === action.payload.todo.id ? action.payload.todo : elm
                 }),
@@ -126,7 +126,7 @@ const updateReducer = (state, action) => {
         case types.TODO_UPDATE_REJECTED:
             return {
                 ...state,
-                isUpdate: false
+                isUpdating: false
             };
         default:
             return state;

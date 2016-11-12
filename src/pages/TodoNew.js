@@ -16,12 +16,13 @@ const titleInput = {
     type: 'text'
 }
 
-const TodoNew = ({cancel, submit, title}) => {
+const TodoNew = ({cancel, loading, submit, title}) => {
     return (
         <div className='row align-center'>
             <div className='small-12 medium-6 large-4 column'>
                 <div className='box'>
                     <Form
+                        loading={loading}
                         submit={submit}
                         cancel={cancel}
                         header='New Todo'>
@@ -37,7 +38,8 @@ TodoNew.propTypes = {
     cancel: PropTypes.func.isRequired,
     change: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
-    title: PropTypes.object.isRequired
+    title: PropTypes.object.isRequired,
+    loading: PropTypes.bool.isRequired
 }
 
 class TodoNewContainer extends Component {
@@ -78,6 +80,7 @@ class TodoNewContainer extends Component {
 
     render() {
         return <TodoNew
+            loading={this.props.loading}
             submit={this.onSubmit}
             change={this.onChange}
             cancel={this.onCancel}
@@ -91,8 +94,14 @@ class TodoNewContainer extends Component {
 }
 
 TodoNewContainer.propTypes = {
-    addTodo: PropTypes.func.isRequired
+    addTodo: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired
 }
+
+const mapStateToProps = ({todos}) => ({
+    loading: todos.isAdding
+})
+
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -100,4 +109,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(null, mapDispatchToProps)(TodoNewContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(TodoNewContainer);

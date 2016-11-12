@@ -4,40 +4,26 @@
 
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import {Link, browserHistory} from 'react-router';
+import {browserHistory} from 'react-router';
 
 import withLoading from './../containers/WithLoading';
 import * as todoActions from './../store/actions/todo';
 
-const TodoEdit = ({completedOptions, change, submit, todo}) => {
+import Form, {Input, Select} from './../components/Form';
+const titleInput = {type: 'text', name: 'title', label: 'Title'}
+const completedSelect = {name: 'completed', label: 'Completed'}
+
+const TodoEdit = ({completed, title, loading, submit, cancel, todoId}) => {
     return (
         <div className='row align-center'>
             <div className='small-12 medium-6 large-4 column'>
                 <div className='box'>
                     <div>
-                        <h3>Edit Todo</h3>
-                        <form onSubmit={submit}>
-                            <label>
-                                Title:
-                                <input type='text' value={todo.title} onChange={change('title')}  />
-                            </label>
-
-                            <label>
-                                Completed:
-                                <select value={todo.completed} onChange={change('completed')} >
-                                    {completedOptions}
-                                </select>
-                            </label>
-
-                            <div className='row text-center'>
-                                <div className=' column'>
-                                    <button className='button' type='submit'>Save</button>
-                                </div>
-                                <div className=' column'>
-                                    <Link to='/todos/' className='button secondary'>Cancel</Link>
-                                </div>
-                            </div>
-                        </form>
+                        <Form submit={submit} loading={loading} cancel={cancel}>
+                            header={`Edit Todo #${todoId}`}
+                            <Input {...title} />
+                            <Select {...completed}/>
+                        </Form>
                     </div>
                 </div>
             </div>
@@ -46,10 +32,12 @@ const TodoEdit = ({completedOptions, change, submit, todo}) => {
 }
 
 TodoEdit.propTypes = {
-    change: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired,
+    cancel: PropTypes.func.isRequired,
+    completed: PropTypes.object.isRequired,
+    title: PropTypes.object.isRequired,
     submit: PropTypes.func.isRequired,
-    todo: PropTypes.object.isRequired,
-    completedOptions: PropTypes.node.isRequired
+    todoId: PropTypes.number.isRequired
 }
 
 class TodoEditContainer extends Component {
@@ -100,26 +88,33 @@ class TodoEditContainer extends Component {
         })
     }
 
-    getCompletedOptions() {
-        return [true, false].map((elm, index) => {
-            return <option key={index} value={elm}>{elm ? 'Yes' : 'No'}</option>
-        })
+    getOptions() {
+        return [true, false].map((elm) => ({id: elm, value: elm ? 'Yes' : 'No'}))
+    }
+
+    onCancel() {
+        browserHistory.push('/todos/')
     }
 
     render() {
-        const box = <TodoEdit key={"my_key"}
-            submit={this.onSubmit}
-            change={this.onChange}
-            loading={this.props.loading}
-            todo={{
-                title: '',
-                completed: false,
-                ...this.props.todo,
-                ...this.state
-            }}
-            completedOptions={this.getCompletedOptions()}/>
+        const {todoId, todo, loading, updating} = this.props;
+        const values = {title: '', completed: false, ...todo, ...this.state}
 
-        return withLoading(box, this.props.loading)
+        const box = <TodoEdit
+            todoId={todoId}
+            cancel={this.onCancel}
+            submit={this.onSubmit}
+            loading={updating}
+            title={{...titleInput, value: values.title, change: this.onChange}}
+            completed={{
+                ...completedSelect,
+                value: values.completed,
+                change: this.onChange,
+                options: this.getOptions()
+            }}
+            />
+
+        return withLoading(box, loading)
     }
 }
 
@@ -128,13 +123,15 @@ TodoEditContainer.propTypes = {
     getTodo: PropTypes.func.isRequired,
     todo: PropTypes.object.isRequired,
     todoId: PropTypes.number.isRequired,
-    loading: PropTypes.bool.isRequired
+    loading: PropTypes.bool.isRequired,
+    updating: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = ({todos}, ownProps) => ({
     todo: todos.current,
     todoId: parseInt(ownProps.params.id, 10),
-    loading: todos.isGetting
+    loading: todos.isFetching,
+    updating: todos.isUpdating
 })
 
 const mapDispatchToProps = dispatch => ({

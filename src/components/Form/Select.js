@@ -11,7 +11,8 @@ const basicPropsValidation = {
     options: PropTypes.node.isRequired,
     value: PropTypes.oneOfType([
         PropTypes.string,
-        PropTypes.number
+        PropTypes.number,
+        PropTypes.bool
     ])
 }
 
@@ -47,17 +48,17 @@ Select.propTypes = basicPropsValidation
 
 class SelectContainer extends Component {
     getOptions() {
-        const {data} = this.props;
+        const {options} = this.props;
 
-        return data.map((elm, index) => <option key={elm.id + index}>{elm.value}</option>)
+        return options.map((elm, index) => <option key={`${elm.value}-${index}`} value={elm.id}>{elm.value}</option>)
     }
 
     render() {
         const {props} = this;
 
         return props.inline
-        ? <InlineSelect {...props} data={this.getOptions()} />
-        : <Select {...props} data={this.getOptions()} />
+        ? <InlineSelect {...props} options={this.getOptions()} />
+    : <Select {...props} options={this.getOptions()} />
     }
 }
 
