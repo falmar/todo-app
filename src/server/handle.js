@@ -3,20 +3,20 @@
 // License that can be found in the LICENSE file.
 
 import React from 'react'
-import ReactDOM from 'react-dom/server';
-import {match, RouterContext} from 'react-router';
-import {createStore, applyMiddleware} from 'redux';
-import {Provider} from 'react-redux';
-import thunk from 'redux-thunk';
+import ReactDOM from 'react-dom/server'
+import {match, RouterContext} from 'react-router'
+import {createStore, applyMiddleware} from 'redux'
+import {Provider} from 'react-redux'
+import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 
-import {Routes} from './../shared/Routes';
+import {Routes} from './../shared/Routes'
 
 // import store reducers
-import App from './../shared/store/App';
+import App from './../shared/store/App'
 
 // store middleware
-const middleware = applyMiddleware(thunk, logger());
+const middleware = applyMiddleware(thunk, logger())
 
 const template = (html, preloadedState) => `
 <!doctype html>
@@ -43,27 +43,25 @@ const template = (html, preloadedState) => `
 `
 
 export default (next) => (req, res) => {
-    match({routes: Routes, location: req.url}, (err, redirect, props) => {
-        if (err) {
-            return res.status(500).send('opps');
-        } else if(redirect) {
-            return res.redirect(302, redirect.pathname + redirect.search);
-        } else if(props) {
+  match({routes: Routes, location: req.url}, (err, redirect, props) => {
+    if (err) {
+      return res.status(500).send('opps')
+    } else if (redirect) {
+      return res.redirect(302, redirect.pathname + redirect.search)
+    } else if (props) {
             // create store
-            const store = createStore(App, middleware);
+      const store = createStore(App, middleware)
+      const html = ReactDOM.renderToString(
+        <Provider store={store}>
+          <RouterContext {...props} />
+        </Provider>
+      )
 
-            const html = ReactDOM.renderToString(
-                <Provider store={store}>
-                    <RouterContext {...props} />
-                </Provider>
-            )
+      const preloadedState = store.getState()
 
-            const preloadedState = store.getState();
+      return res.send(template(html, preloadedState))
+    }
 
-            return res.send(template(html, preloadedState));
-        }
-
-        return next(req, res)
-    });
-
+    return next(req, res)
+  })
 }
