@@ -77,7 +77,7 @@ class TopbarContainer extends Component {
                     : ''} style={style}>
           <Link to={menu.to}>{menu.text}</Link>
         </li>
-            )
+      )
     })
   }
 
@@ -87,7 +87,7 @@ class TopbarContainer extends Component {
 
     return (
       <Topbar menu={this.getMenu(pathname)} access={ac()} />
-        )
+    )
   }
 }
 

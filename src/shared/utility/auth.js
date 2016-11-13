@@ -2,41 +2,41 @@
 // Use of this source code is governed by a MIT License
 // License that can be found in the LICENSE file.
 
-import axios from 'axios';
-import {signInFulfilled, signOut} from './../store/actions/auth';
+import axios from 'axios'
+import {signInFulfilled, signOut} from './../store/actions/auth'
 
-import {getAPIUrl} from './api';
+import {getAPIUrl} from './api'
 
 export const setAuthHeader = token => {
-    window.localStorage.setItem('token', token);
-    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-};
+  window.localStorage.setItem('token', token)
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`
+}
 
 export const removeAuthHeader = () => {
-    window.localStorage.removeItem('token');
-    axios.defaults.headers.common.Authorization = null;
-};
+  window.localStorage.removeItem('token')
+  axios.defaults.headers.common.Authorization = null
+}
 
 export const checkToken = (dispatch) => {
-    return new Promise(resolve => {
-        const token = window.localStorage.getItem('token');
+  return new Promise(resolve => {
+    const token = window.localStorage.getItem('token')
 
-        if (token === '' || token === null) {
-            resolve(true)
-        } else {
-            axios.get(getAPIUrl('/checkToken/'), {
-              params: {
-                access_token: token
-              }
-            }).then(res => {
-                dispatch(signInFulfilled(res.data))
-                setAuthHeader(res.data.token);
-                resolve(true)
-            }).catch(() => {
-                dispatch(signOut())
-                removeAuthHeader();
-                resolve(true);
-            });
+    if (token === '' || token === null) {
+      resolve(true)
+    } else {
+      axios.get(getAPIUrl('/checkToken/'), {
+        params: {
+          access_token: token
         }
-    });
-};
+      }).then(res => {
+        dispatch(signInFulfilled(res.data))
+        setAuthHeader(res.data.token)
+        resolve(true)
+      }).catch(() => {
+        dispatch(signOut())
+        removeAuthHeader()
+        resolve(true)
+      })
+    }
+  })
+}

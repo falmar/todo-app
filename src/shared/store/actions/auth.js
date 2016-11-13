@@ -2,10 +2,10 @@
 // Use of this source code is governed by a MIT License
 // License that can be found in the LICENSE file.
 
-import axios from 'axios';
+import axios from 'axios'
 
-import {getAPIUrl} from './../../utility/api';
-import * as types from './../constants/auth';
+import {getAPIUrl} from './../../utility/api'
+import * as types from './../constants/auth'
 
 const signInPending = () => {
   return {
@@ -31,30 +31,30 @@ const signInRejected = () => {
 }
 
 const signIn = (email, password) => {
-    return (dispatch, getState) => {
-        return new Promise((resolve, reject) => {
-            const {auth} = getState();
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      const {auth} = getState()
 
-            if(!auth.loading) {
-                dispatch(signInPending());
+      if (!auth.loading) {
+        dispatch(signInPending())
 
-                axios.post(getAPIUrl('/login/'), {
-                    email,
-                    password
-                }).then(response => {
-                    dispatch(signInFulfilled(response.data));
+        axios.post(getAPIUrl('/login/'), {
+          email,
+          password
+        }).then(response => {
+          dispatch(signInFulfilled(response.data))
 
-                    return resolve(response);
-                }).catch(err => {
-                    dispatch(signInRejected());
+          return resolve(response)
+        }).catch(err => {
+          dispatch(signInRejected())
 
-                    return reject(err);
-                });
-            } else {
-                reject(new Error('it is loading'));
-            }
-        });
-    }
+          return reject(err)
+        })
+      } else {
+        reject(new Error('it is loading'))
+      }
+    })
+  }
 }
 
 const signOut = () => {
@@ -66,46 +66,46 @@ const signOut = () => {
 export {signInFulfilled, signIn, signOut}
 
 const signUpPending = () => {
-    return {
-        type: types.SIGN_UP_PENDING
-    }
+  return {
+    type: types.SIGN_UP_PENDING
+  }
 }
 
 const signUpFulfilled = () => {
-    return {
-        type: types.SIGN_UP_FULFILLED
-    }
+  return {
+    type: types.SIGN_UP_FULFILLED
+  }
 }
 
 const signUpRejected = () => {
-    return {
-        type: types.SIGN_UP_REJECTED
-    }
+  return {
+    type: types.SIGN_UP_REJECTED
+  }
 }
 
 const signUp = (body) => {
-    return (dispatch, getState) => {
-        return new Promise((resolve, reject) => {
-            const {loading} = getState().auth;
+  return (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+      const {loading} = getState().auth
 
-            if(!loading) {
-                dispatch(signUpPending());
+      if (!loading) {
+        dispatch(signUpPending())
 
-                axios.post(
+        axios.post(
                     getAPIUrl('/user/'),
                     body
                 ).then((response) => {
-                    dispatch(signUpFulfilled())
-                    resolve(response);
+                  dispatch(signUpFulfilled())
+                  resolve(response)
                 }).catch((err) => {
-                    dispatch(signUpRejected())
-                    reject(err);
+                  dispatch(signUpRejected())
+                  reject(err)
                 })
-            } else {
-                reject(new Error('it is loading'));
-            }
-        });
-    }
+      } else {
+        reject(new Error('it is loading'))
+      }
+    })
+  }
 }
 
 export {signUp}

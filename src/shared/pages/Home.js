@@ -5,13 +5,13 @@
 import React from 'react'
 
 const Home = () => {
-    return (
-        <div className='row'>
-            <div className='text-center column'>
-                <h1>TODO-App</h1>
-            </div>
-        </div>
-    )
+  return (
+    <div className='row'>
+      <div className='text-center column'>
+        <h1>TODO-App</h1>
+      </div>
+    </div>
+  )
 }
 
 export default Home
